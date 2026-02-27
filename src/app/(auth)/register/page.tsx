@@ -55,9 +55,9 @@ const roles = [
 ];
 
 export default function RegisterPage() {
-  const router = useRouter();
   const [role, setRole] = useState<string>("");
   const [loading, setLoading] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
 
   const {
     register,
@@ -81,6 +81,7 @@ export default function RegisterPage() {
       password: data.password,
       options: {
         data: { name: data.name, role },
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
     });
 
@@ -103,15 +104,38 @@ export default function RegisterPage() {
       return;
     }
 
-    toast.success("Account created successfully!");
-
-    // Redirect based on role
-    if (role === "shelter") {
-      router.push("/shelter-setup");
-    } else {
-      router.push("/preferences");
-    }
+    setEmailSent(true);
+    toast.success("Check your email to confirm your account!");
+    setLoading(false);
   };
+
+  if (emailSent) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <div className="text-4xl mb-2">📧</div>
+            <CardTitle className="text-2xl">Check your email!</CardTitle>
+            <CardDescription>
+              We sent a confirmation link to your email. Click it to activate
+              your account.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="text-center">
+            <p className="text-sm text-gray-500">
+              Already confirmed?{" "}
+              <Link
+                href="/login"
+                className="text-black font-medium hover:underline"
+              >
+                Sign in
+              </Link>
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">

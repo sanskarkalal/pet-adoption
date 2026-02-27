@@ -62,11 +62,13 @@ export default function LoginPage() {
 
     toast.success("Welcome back!");
 
-    // Redirect based on role
+    // Refresh session then redirect based on role
+    router.refresh();
+
     if (profile?.role === "shelter") {
       router.push("/shelter-setup");
     } else {
-      router.push("/preferences");
+      router.push("/home");
     }
   };
 
@@ -80,7 +82,6 @@ export default function LoginPage() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-            {/* Email */}
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -94,7 +95,6 @@ export default function LoginPage() {
               )}
             </div>
 
-            {/* Password */}
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
               <Input
@@ -115,7 +115,7 @@ export default function LoginPage() {
             </Button>
 
             <p className="text-center text-sm text-gray-500">
-              Don't have an account?{" "}
+              Dont have an account?{" "}
               <Link
                 href="/register"
                 className="text-black font-medium hover:underline"
