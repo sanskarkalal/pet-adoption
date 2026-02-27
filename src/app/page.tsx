@@ -15,6 +15,16 @@ export default async function Home() {
     .eq("id", user.id)
     .single();
 
-  if (profile?.role === "shelter") redirect("/shelter-setup");
-  else redirect("/home");
+  if (profile?.role === "shelter") {
+    const { data: shelter } = await supabase
+      .from("shelters")
+      .select("id")
+      .eq("user_id", user.id)
+      .single();
+
+    if (shelter) redirect("/home");
+    else redirect("/shelter-setup");
+  }
+
+  redirect("/home");
 }
