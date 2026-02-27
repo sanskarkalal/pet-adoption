@@ -25,7 +25,17 @@ export async function GET(request: NextRequest) {
     .single();
 
   if (profile?.role === "shelter") {
-    return NextResponse.redirect(new URL("/shelter-setup", request.url));
+    const { data: shelter } = await supabase
+      .from("shelters")
+      .select("id")
+      .eq("user_id", user.id)
+      .single();
+
+    if (shelter) {
+      return NextResponse.redirect(new URL("/home", request.url));
+    } else {
+      return NextResponse.redirect(new URL("/shelter-setup", request.url));
+    }
   }
 
   return NextResponse.redirect(new URL("/home", request.url));

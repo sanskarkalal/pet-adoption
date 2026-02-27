@@ -53,7 +53,6 @@ export default function LoginPage() {
       return;
     }
 
-    // Fetch user profile to get role
     const { data: profile } = await supabase
       .from("profiles")
       .select("role")
@@ -61,12 +60,20 @@ export default function LoginPage() {
       .single();
 
     toast.success("Welcome back!");
-
-    // Refresh session then redirect based on role
     router.refresh();
 
     if (profile?.role === "shelter") {
-      router.push("/shelter-setup");
+      const { data: shelter } = await supabase
+        .from("shelters")
+        .select("id")
+        .eq("user_id", authData.user.id)
+        .single();
+
+      if (shelter) {
+        router.push("/home");
+      } else {
+        router.push("/shelter-setup");
+      }
     } else {
       router.push("/home");
     }
