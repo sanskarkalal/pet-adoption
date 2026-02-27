@@ -75,7 +75,17 @@ export default function LoginPage() {
         router.push("/shelter-setup");
       }
     } else {
-      router.push("/home");
+      const { data: prefs } = await supabase
+        .from("preferences")
+        .select("id")
+        .eq("user_id", authData.user.id)
+        .single();
+
+      if (prefs) {
+        router.push("/home");
+      } else {
+        router.push("/preferences");
+      }
     }
   };
 

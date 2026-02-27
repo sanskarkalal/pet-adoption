@@ -37,6 +37,15 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(new URL("/shelter-setup", request.url));
     }
   }
+  const { data: prefs } = await supabase
+    .from("preferences")
+    .select("id")
+    .eq("user_id", user.id)
+    .single();
 
-  return NextResponse.redirect(new URL("/home", request.url));
+  if (prefs) {
+    return NextResponse.redirect(new URL("/home", request.url));
+  } else {
+    return NextResponse.redirect(new URL("/preferences", request.url));
+  }
 }
