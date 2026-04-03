@@ -2,9 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,44 +17,85 @@ import {
 } from "@/components/ui/card";
 import { toast } from "sonner";
 
-const petSchema = z.object({
-  name: z.string().min(1, "Pet name is required"),
-  species: z.string().min(1, "Species is required"),
-  breed: z.string().optional(),
-  age: z.coerce.number().min(0, "Age must be a positive number").optional(),
-  sex: z.enum(["male", "female", "unknown"]),
-  description: z.string().optional(),
-  behavior: z.string().optional(),
-  medical_history: z.string().optional(),
-  is_vaccinated: z.boolean().default(false),
-  is_neutered: z.boolean().default(false),
-});
+// Uncomment once Zach's MediaUpload.tsx is in place
+// import MediaUpload from "@/components/ui/MediaUpload";
 
-type PetForm = z.infer<typeof petSchema>;
+const SPECIES_OPTIONS = [
+  "Dog",
+  "Cat",
+  "Rabbit",
+  "Bird",
+  "Guinea Pig",
+  "Other",
+] as const;
+const SEX_OPTIONS = ["male", "female", "unknown"] as const;
+const TRAINING_OPTIONS = ["none", "basic", "intermediate", "advanced"] as const;
+
+type Sex = (typeof SEX_OPTIONS)[number];
+type TrainingLevel = (typeof TRAINING_OPTIONS)[number];
+
+const trainingLabels: Record<TrainingLevel, string> = {
+  none: "No Training",
+  basic: "Basic Commands",
+  intermediate: "Intermediate",
+  advanced: "Advanced",
+};
 
 export default function PetRegisterPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    watch,
-    formState: { errors },
-  } = useForm<PetForm>({
-    resolver: zodResolver(petSchema),
-    defaultValues: {
-      sex: "unknown",
-      is_vaccinated: false,
-      is_neutered: false,
-    },
-  });
+  // Core fields
+  const [name, setName] = useState("");
+  const [species, setSpecies] = useState("");
+  const [breed, setBreed] = useState("");
+  const [age, setAge] = useState("");
+  const [sex, setSex] = useState<Sex>("unknown");
+  const [description, setDescription] = useState("");
+  const [behavior, setBehavior] = useState("");
+  const [medicalHistory, setMedicalHistory] = useState("");
+  const [isVaccinated, setIsVaccinated] = useState(false);
+  const [isNeutered, setIsNeutered] = useState(false);
 
-  const isVaccinated = watch("is_vaccinated");
-  const isNeutered = watch("is_neutered");
+  // R2 fields
+  const [energyLevel, setEnergyLevel] = useState("");
+  const [goodWithChildren, setGoodWithChildren] = useState(false);
+  const [goodWithAnimals, setGoodWithAnimals] = useState(false);
+  const [houseTrained, setHouseTrained] = useState(false);
+  const [trainingLevel, setTrainingLevel] = useState<TrainingLevel>("none");
+  const [uniqueQuirks, setUniqueQuirks] = useState("");
+  const [specialNeeds, setSpecialNeeds] = useState("");
 
-  const onSubmit = async (data: PetForm) => {
+  // Media — wired up once MediaUpload is in place
+  const [photoUrls] = useState<string[]>([]);
+  const [videoUrls] = useState<string[]>([]);
+
+  // Validation errors
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validate = (): boolean => {
+    const newErrors: Record<string, string> = {};
+    if (!name.trim()) newErrors.name = "Pet name is required";
+    if (!species) newErrors.species = "Species is required";
+    if (age !== "" && (isNaN(Number(age)) || Number(age) < 0)) {
+      newErrors.age = "Age must be a positive number";
+    }
+    if (
+      energyLevel !== "" &&
+      (isNaN(Number(energyLevel)) ||
+        Number(energyLevel) < 1 ||
+        Number(energyLevel) > 10)
+    ) {
+      newErrors.energyLevel = "Energy level must be between 1 and 10";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validate()) return;
+
     setLoading(true);
     const supabase = createClient();
 
@@ -65,12 +103,10 @@ export default function PetRegisterPage() {
       data: { user },
     } = await supabase.auth.getUser();
     if (!user) {
-      toast.error("Not authenticated");
       router.push("/login");
       return;
     }
 
-    // Get shelter id for this user
     const { data: shelter } = await supabase
       .from("shelters")
       .select("id")
@@ -83,33 +119,44 @@ export default function PetRegisterPage() {
       return;
     }
 
-    // Check for duplicate pet name in this shelter
+    // Duplicate name check
     const { data: existing } = await supabase
       .from("pets")
       .select("id")
       .eq("shelter_id", shelter.id)
-      .eq("name", data.name)
+      .eq("name", name.trim())
       .single();
 
     if (existing) {
-      toast.error(`A pet named "${data.name}" already exists in your shelter`);
+      toast.error(
+        `A pet named "${name.trim()}" already exists in your shelter`,
+      );
       setLoading(false);
       return;
     }
 
     const { error } = await supabase.from("pets").insert({
       shelter_id: shelter.id,
-      name: data.name,
-      species: data.species,
-      breed: data.breed || null,
-      age: data.age || null,
-      sex: data.sex,
-      description: data.description || null,
-      behavior: data.behavior || null,
-      medical_history: data.medical_history || null,
-      is_vaccinated: data.is_vaccinated,
-      is_neutered: data.is_neutered,
+      name: name.trim(),
+      species,
+      breed: breed || null,
+      age: age !== "" ? Number(age) : null,
+      sex,
+      description: description || null,
+      behavior: behavior || null,
+      medical_history: medicalHistory || null,
+      is_vaccinated: isVaccinated,
+      is_neutered: isNeutered,
       status: "available",
+      energy_level: energyLevel !== "" ? Number(energyLevel) : null,
+      good_with_children: goodWithChildren,
+      good_with_animals: goodWithAnimals,
+      house_trained: houseTrained,
+      training_level: trainingLevel,
+      special_needs: specialNeeds || null,
+      unique_quirks: uniqueQuirks || null,
+      photo_urls: photoUrls.length > 0 ? photoUrls : null,
+      video_urls: videoUrls.length > 0 ? videoUrls : null,
     });
 
     if (error) {
@@ -118,13 +165,13 @@ export default function PetRegisterPage() {
       return;
     }
 
-    toast.success("Pet registered successfully!");
-    router.push("/home");
+    toast.success("Pet registered successfully! 🐾");
+    router.push("/manage-pets");
   };
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-lg">
+      <Card className="w-full max-w-2xl">
         <CardHeader className="text-center">
           <div className="text-4xl mb-2">🐾</div>
           <CardTitle className="text-2xl">Register a Pet</CardTitle>
@@ -133,30 +180,50 @@ export default function PetRegisterPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Pet Name</Label>
-                <Input id="name" placeholder="Buddy" {...register("name")} />
-                {errors.name && (
-                  <p className="text-red-500 text-sm">{errors.name.message}</p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="species">Species</Label>
-                <Input
-                  id="species"
-                  placeholder="Dog, Cat, Rabbit..."
-                  {...register("species")}
-                />
-                {errors.species && (
-                  <p className="text-red-500 text-sm">
-                    {errors.species.message}
-                  </p>
-                )}
-              </div>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Name */}
+            <div className="space-y-2">
+              <Label htmlFor="name">
+                Pet Name <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                id="name"
+                placeholder="Buddy"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+              {errors.name && (
+                <p className="text-red-500 text-sm">{errors.name}</p>
+              )}
             </div>
 
+            {/* Species */}
+            <div className="space-y-2">
+              <Label>
+                Species <span className="text-red-500">*</span>
+              </Label>
+              <div className="flex flex-wrap gap-2">
+                {SPECIES_OPTIONS.map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={() => setSpecies(s)}
+                    className={`px-3 py-1.5 rounded-full border-2 text-sm font-medium transition-all cursor-pointer ${
+                      species === s
+                        ? "border-black bg-black text-white"
+                        : "border-gray-200 hover:border-gray-400 bg-white"
+                    }`}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+              {errors.species && (
+                <p className="text-red-500 text-sm">{errors.species}</p>
+              )}
+            </div>
+
+            {/* Breed + Age */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="breed">
@@ -165,8 +232,9 @@ export default function PetRegisterPage() {
                 </Label>
                 <Input
                   id="breed"
-                  placeholder="Golden Retriever"
-                  {...register("breed")}
+                  placeholder="Labrador Retriever"
+                  value={breed}
+                  onChange={(e) => setBreed(e.target.value)}
                 />
               </div>
               <div className="space-y-2">
@@ -178,26 +246,28 @@ export default function PetRegisterPage() {
                   id="age"
                   type="number"
                   placeholder="3"
-                  {...register("age")}
+                  value={age}
+                  onChange={(e) => setAge(e.target.value)}
                 />
                 {errors.age && (
-                  <p className="text-red-500 text-sm">{errors.age.message}</p>
+                  <p className="text-red-500 text-sm">{errors.age}</p>
                 )}
               </div>
             </div>
 
+            {/* Sex */}
             <div className="space-y-2">
-              <Label>Sex</Label>
-              <div className="grid grid-cols-3 gap-3">
-                {["male", "female", "unknown"].map((s) => (
+              <Label>
+                Sex <span className="text-red-500">*</span>
+              </Label>
+              <div className="flex gap-3">
+                {SEX_OPTIONS.map((s) => (
                   <button
                     key={s}
                     type="button"
-                    onClick={() =>
-                      setValue("sex", s as "male" | "female" | "unknown")
-                    }
-                    className={`p-2 rounded-lg border-2 text-center text-sm font-medium transition-all cursor-pointer capitalize ${
-                      watch("sex") === s
+                    onClick={() => setSex(s)}
+                    className={`px-3 py-1.5 rounded-full border-2 text-sm font-medium transition-all cursor-pointer ${
+                      sex === s
                         ? "border-black bg-black text-white"
                         : "border-gray-200 hover:border-gray-400 bg-white"
                     }`}
@@ -212,6 +282,7 @@ export default function PetRegisterPage() {
               </div>
             </div>
 
+            {/* Description */}
             <div className="space-y-2">
               <Label htmlFor="description">
                 Description{" "}
@@ -220,22 +291,26 @@ export default function PetRegisterPage() {
               <Textarea
                 id="description"
                 placeholder="Tell adopters about this pet..."
-                {...register("description")}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
               />
             </div>
 
+            {/* Behavior */}
             <div className="space-y-2">
               <Label htmlFor="behavior">
-                Behavior & Quirks{" "}
+                Behavior & Personality{" "}
                 <span className="text-gray-400 text-xs">(optional)</span>
               </Label>
               <Textarea
                 id="behavior"
                 placeholder="Loves to play fetch, good with kids..."
-                {...register("behavior")}
+                value={behavior}
+                onChange={(e) => setBehavior(e.target.value)}
               />
             </div>
 
+            {/* Medical History */}
             <div className="space-y-2">
               <Label htmlFor="medical_history">
                 Medical History{" "}
@@ -243,17 +318,19 @@ export default function PetRegisterPage() {
               </Label>
               <Textarea
                 id="medical_history"
-                placeholder="Any known medical conditions or history..."
-                {...register("medical_history")}
+                placeholder="Any known conditions or history..."
+                value={medicalHistory}
+                onChange={(e) => setMedicalHistory(e.target.value)}
               />
             </div>
 
+            {/* Vaccinated / Neutered */}
             <div className="flex gap-6">
               <div className="flex items-center gap-2">
                 <Checkbox
                   id="is_vaccinated"
                   checked={isVaccinated}
-                  onCheckedChange={(val) => setValue("is_vaccinated", !!val)}
+                  onCheckedChange={(val) => setIsVaccinated(!!val)}
                 />
                 <Label htmlFor="is_vaccinated">Vaccinated</Label>
               </div>
@@ -261,10 +338,130 @@ export default function PetRegisterPage() {
                 <Checkbox
                   id="is_neutered"
                   checked={isNeutered}
-                  onCheckedChange={(val) => setValue("is_neutered", !!val)}
+                  onCheckedChange={(val) => setIsNeutered(!!val)}
                 />
                 <Label htmlFor="is_neutered">Neutered/Spayed</Label>
               </div>
+            </div>
+
+            {/* R2 Fields divider */}
+            <div className="border-t border-gray-100 pt-6">
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-6">
+                Additional Details
+              </p>
+
+              {/* Energy Level */}
+              <div className="space-y-2 mb-6">
+                <Label htmlFor="energy_level">
+                  Energy Level (1–10){" "}
+                  <span className="text-gray-400 text-xs">(optional)</span>
+                </Label>
+                <Input
+                  id="energy_level"
+                  type="number"
+                  min={1}
+                  max={10}
+                  placeholder="e.g. 7"
+                  value={energyLevel}
+                  onChange={(e) => setEnergyLevel(e.target.value)}
+                />
+                {errors.energyLevel && (
+                  <p className="text-red-500 text-sm">{errors.energyLevel}</p>
+                )}
+              </div>
+
+              {/* Compatibility */}
+              <div className="space-y-2 mb-6">
+                <Label>Compatibility</Label>
+                <div className="flex gap-6 flex-wrap">
+                  <div className="flex items-center gap-2">
+                    <Checkbox
+                      id="good_with_children"
+                      checked={goodWithChildren}
+                      onCheckedChange={(val) => setGoodWithChildren(!!val)}
+                    />
+                    <Label htmlFor="good_with_children">
+                      Good with children
+                    </Label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Checkbox
+                      id="good_with_animals"
+                      checked={goodWithAnimals}
+                      onCheckedChange={(val) => setGoodWithAnimals(!!val)}
+                    />
+                    <Label htmlFor="good_with_animals">
+                      Good with other animals
+                    </Label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Checkbox
+                      id="house_trained"
+                      checked={houseTrained}
+                      onCheckedChange={(val) => setHouseTrained(!!val)}
+                    />
+                    <Label htmlFor="house_trained">House trained</Label>
+                  </div>
+                </div>
+              </div>
+
+              {/* Training Level */}
+              <div className="space-y-2 mb-6">
+                <Label>Training Level</Label>
+                <div className="flex flex-wrap gap-2">
+                  {TRAINING_OPTIONS.map((t) => (
+                    <button
+                      key={t}
+                      type="button"
+                      onClick={() => setTrainingLevel(t)}
+                      className={`px-3 py-1.5 rounded-full border-2 text-sm font-medium transition-all cursor-pointer ${
+                        trainingLevel === t
+                          ? "border-black bg-black text-white"
+                          : "border-gray-200 hover:border-gray-400 bg-white"
+                      }`}
+                    >
+                      {trainingLabels[t]}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Unique Quirks */}
+              <div className="space-y-2 mb-6">
+                <Label htmlFor="unique_quirks">
+                  Unique Quirks{" "}
+                  <span className="text-gray-400 text-xs">(optional)</span>
+                </Label>
+                <Textarea
+                  id="unique_quirks"
+                  placeholder="Scared of thunder, loves belly rubs..."
+                  value={uniqueQuirks}
+                  onChange={(e) => setUniqueQuirks(e.target.value)}
+                />
+              </div>
+
+              {/* Special Needs */}
+              <div className="space-y-2 mb-6">
+                <Label htmlFor="special_needs">
+                  Special Needs{" "}
+                  <span className="text-gray-400 text-xs">(optional)</span>
+                </Label>
+                <Textarea
+                  id="special_needs"
+                  placeholder="Requires daily medication, needs quiet environment..."
+                  value={specialNeeds}
+                  onChange={(e) => setSpecialNeeds(e.target.value)}
+                />
+              </div>
+
+              {/* Media Upload — uncomment once Zach's MediaUpload.tsx is in place */}
+              {/* <div className="space-y-2 mb-6">
+                <Label>Photos & Videos</Label>
+                <MediaUpload
+                  onPhotosChange={setPhotoUrls}
+                  onVideosChange={setVideoUrls}
+                />
+              </div> */}
             </div>
 
             <Button type="submit" className="w-full" disabled={loading}>

@@ -29,13 +29,17 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Protected routes
+  // Protected routes — R1 + R2
   const protectedPaths = [
     "/home",
     "/shelter-setup",
     "/pet-register",
     "/preferences",
+    "/manage-pets",
+    "/pets",
+    "/applications",
   ];
+
   const isProtected = protectedPaths.some((path) =>
     request.nextUrl.pathname.startsWith(path),
   );

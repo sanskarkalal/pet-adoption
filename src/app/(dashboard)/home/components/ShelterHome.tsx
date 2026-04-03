@@ -48,19 +48,27 @@ export default function ShelterHome({ profile, shelter, pets }: Props) {
       </nav>
 
       <div className="max-w-6xl mx-auto px-6 py-8">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        {/* Action bar */}
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Your Pets</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
             <p className="text-gray-500 mt-1">
               {pets.length === 0
                 ? "No pets listed yet"
                 : `${pets.length} pet${pets.length === 1 ? "" : "s"} listed`}
             </p>
           </div>
-          <Link href="/pet-register">
-            <Button>+ Register New Pet</Button>
-          </Link>
+          <div className="flex flex-wrap gap-3">
+            <Link href="/applications">
+              <Button variant="outline">📋 Applications</Button>
+            </Link>
+            <Link href="/manage-pets">
+              <Button variant="outline">🐾 Manage Pets</Button>
+            </Link>
+            <Link href="/pet-register">
+              <Button>+ Register New Pet</Button>
+            </Link>
+          </div>
         </div>
 
         {/* Pet Grid */}
