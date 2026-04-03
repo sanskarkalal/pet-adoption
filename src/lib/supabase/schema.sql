@@ -110,7 +110,7 @@ CREATE POLICY "Shelters can delete own pets" ON public.pets FOR DELETE
   USING (EXISTS (SELECT 1 FROM public.shelters WHERE user_id = auth.uid() AND id = shelter_id));
 
 -- Shelters
-CREATE POLICY "Shelters can view own data" ON public.shelters FOR SELECT USING (user_id = auth.uid());
+CREATE POLICY "Anyone can view shelter data" ON public.shelters FOR SELECT USING (true);
 CREATE POLICY "Shelters can insert own data" ON public.shelters FOR INSERT WITH CHECK (user_id = auth.uid());
 CREATE POLICY "Shelters can update own data" ON public.shelters FOR UPDATE USING (user_id = auth.uid());
 
