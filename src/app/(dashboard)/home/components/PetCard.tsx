@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 type Pet = {
   id: string;
@@ -54,11 +55,15 @@ export default function PetCard({
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all group-hover:border-gray-300 overflow-hidden">
         {/* Photo or fallback */}
         {pet.photo_urls && pet.photo_urls.length > 0 ? (
-          <img
-            src={pet.photo_urls[0]}
-            alt={pet.name}
-            className="w-full h-44 object-cover"
-          />
+          <div className="relative w-full h-44">
+            <Image
+              src={pet.photo_urls[0]}
+              alt={pet.name}
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            />
+          </div>
         ) : (
           <div className="w-full h-44 bg-gray-100 flex items-center justify-center text-5xl">
             {speciesEmoji}

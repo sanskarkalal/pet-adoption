@@ -5,8 +5,9 @@ import EditPetClient from "./EditPetClient";
 export default async function EditPetPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id } = await params;
   const supabase = await createClient();
 
   const {
@@ -25,7 +26,7 @@ export default async function EditPetPage({
   const { data: pet } = await supabase
     .from("pets")
     .select("*")
-    .eq("id", params.id)
+    .eq("id", id)
     .eq("shelter_id", shelter.id)
     .single();
 

@@ -16,10 +16,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import MediaUpload from "@/components/ui/MediaUpload";
 import { toast } from "sonner";
-
-// MediaUpload will be added by Zach — uncomment once that file exists
-// import MediaUpload from "@/components/ui/MediaUpload";
 
 const STATUS_OPTIONS = [
   "available",
@@ -88,8 +86,8 @@ function toTraining(val: string | undefined): TrainingLevel {
 export default function EditPetClient({ pet }: { pet: Pet }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [mediaUploading, setMediaUploading] = useState(false);
 
-  // Controlled state — no react-hook-form to avoid resolver version conflicts
   const [status, setStatus] = useState<Status>(toStatus(pet.status));
   const [description, setDescription] = useState(pet.description ?? "");
   const [behavior, setBehavior] = useState(pet.behavior ?? "");
@@ -113,8 +111,8 @@ export default function EditPetClient({ pet }: { pet: Pet }) {
   );
   const [uniqueQuirks, setUniqueQuirks] = useState(pet.unique_quirks ?? "");
   const [specialNeeds, setSpecialNeeds] = useState(pet.special_needs ?? "");
-  const [photoUrls] = useState<string[]>(pet.photo_urls ?? []);
-  const [videoUrls] = useState<string[]>(pet.video_urls ?? []);
+  const [photoUrls, setPhotoUrls] = useState<string[]>(pet.photo_urls ?? []);
+  const [videoUrls, setVideoUrls] = useState<string[]>(pet.video_urls ?? []);
   const [energyError, setEnergyError] = useState("");
 
   const validate = (): boolean => {
@@ -132,6 +130,10 @@ export default function EditPetClient({ pet }: { pet: Pet }) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
+    if (mediaUploading) {
+      toast.error("Please wait for the photo or video upload to finish.");
+      return;
+    }
 
     setLoading(true);
     const supabase = createClient();
@@ -420,8 +422,8 @@ export default function EditPetClient({ pet }: { pet: Pet }) {
                 />
               </div>
 
-              {/* Media Upload — uncomment once Zach's MediaUpload.tsx is in place */}
-              {/* <div className="space-y-2">
+              {/* Photos & Videos */}
+              <div className="space-y-2">
                 <Label>Photos & Videos</Label>
                 <MediaUpload
                   petId={pet.id}
@@ -429,10 +431,15 @@ export default function EditPetClient({ pet }: { pet: Pet }) {
                   existingVideoUrls={videoUrls}
                   onPhotosChange={setPhotoUrls}
                   onVideosChange={setVideoUrls}
+                  onUploadStateChange={setMediaUploading}
                 />
-              </div> */}
+              </div>
 
-              <Button type="submit" className="w-full" disabled={loading}>
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={loading || mediaUploading}
+              >
                 {loading ? "Saving..." : "Save Changes →"}
               </Button>
             </form>

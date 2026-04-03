@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -45,7 +44,6 @@ export default function ManagePetsClient({
   shelter,
   pets: initialPets,
 }: Props) {
-  const router = useRouter();
   const [pets, setPets] = useState(initialPets);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
@@ -134,7 +132,10 @@ export default function ManagePetsClient({
                         {pet.name}
                       </h3>
                       <span
-                        className={`text-xs font-medium px-2 py-0.5 rounded-full border capitalize ${statusColors[pet.status] ?? "bg-gray-100 text-gray-600"}`}
+                        className={`text-xs font-medium px-2 py-0.5 rounded-full border capitalize ${
+                          statusColors[pet.status] ??
+                          "bg-gray-100 text-gray-600"
+                        }`}
                       >
                         {statusLabels[pet.status] ?? pet.status}
                       </span>

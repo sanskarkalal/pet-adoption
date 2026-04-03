@@ -15,10 +15,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import MediaUpload from "@/components/ui/MediaUpload";
 import { toast } from "sonner";
-
-// Uncomment once Zach's MediaUpload.tsx is in place
-// import MediaUpload from "@/components/ui/MediaUpload";
 
 const SPECIES_OPTIONS = [
   "Dog",
@@ -66,9 +64,9 @@ export default function PetRegisterPage() {
   const [uniqueQuirks, setUniqueQuirks] = useState("");
   const [specialNeeds, setSpecialNeeds] = useState("");
 
-  // Media — wired up once MediaUpload is in place
-  const [photoUrls] = useState<string[]>([]);
-  const [videoUrls] = useState<string[]>([]);
+  // Media
+  const [photoUrls, setPhotoUrls] = useState<string[]>([]);
+  const [videoUrls, setVideoUrls] = useState<string[]>([]);
 
   // Validation errors
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -344,7 +342,7 @@ export default function PetRegisterPage() {
               </div>
             </div>
 
-            {/* R2 Fields divider */}
+            {/* R2 Fields */}
             <div className="border-t border-gray-100 pt-6">
               <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-6">
                 Additional Details
@@ -454,14 +452,14 @@ export default function PetRegisterPage() {
                 />
               </div>
 
-              {/* Media Upload — uncomment once Zach's MediaUpload.tsx is in place */}
-              {/* <div className="space-y-2 mb-6">
+              {/* Photos & Videos */}
+              <div className="space-y-2 mb-6">
                 <Label>Photos & Videos</Label>
                 <MediaUpload
                   onPhotosChange={setPhotoUrls}
                   onVideosChange={setVideoUrls}
                 />
-              </div> */}
+              </div>
             </div>
 
             <Button type="submit" className="w-full" disabled={loading}>

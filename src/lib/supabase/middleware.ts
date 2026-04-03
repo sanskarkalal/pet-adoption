@@ -38,6 +38,7 @@ export async function updateSession(request: NextRequest) {
     "/manage-pets",
     "/pets",
     "/applications",
+    "/bookmarks",
   ];
 
   const isProtected = protectedPaths.some((path) =>

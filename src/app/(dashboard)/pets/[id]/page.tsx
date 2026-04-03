@@ -5,8 +5,9 @@ import PetProfileView from "./components/PetProfileView";
 export default async function PetProfilePage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id } = await params;
   const supabase = await createClient();
 
   const {
@@ -23,7 +24,7 @@ export default async function PetProfilePage({
   const { data: pet } = await supabase
     .from("pets")
     .select("*, shelters(id, name, city, state, phone, email)")
-    .eq("id", params.id)
+    .eq("id", id)
     .single();
 
   if (!pet) notFound();
@@ -63,6 +64,11 @@ export default async function PetProfilePage({
     isShelterOwner = shelter?.id === pet.shelter_id;
   }
 
+  const { count: applicationCount } = await supabase
+    .from("adoption_applications")
+    .select("*", { count: "exact", head: true })
+    .eq("pet_id", pet.id);
+
   return (
     <PetProfileView
       pet={pet}
@@ -71,6 +77,7 @@ export default async function PetProfilePage({
       hasApplied={hasApplied}
       isBookmarked={isBookmarked}
       isShelterOwner={isShelterOwner}
+      applicationCount={applicationCount ?? 0}
     />
   );
 }

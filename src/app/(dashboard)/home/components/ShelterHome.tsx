@@ -7,10 +7,28 @@ import { Button } from "@/components/ui/button";
 import PetCard from "./PetCard";
 import { toast } from "sonner";
 
+type Pet = {
+  id: string;
+  name: string;
+  species: string;
+  breed?: string;
+  age?: number;
+  sex: string;
+  status: string;
+  description?: string;
+  is_vaccinated: boolean;
+  is_neutered: boolean;
+  energy_level?: number;
+  good_with_children?: boolean;
+  good_with_animals?: boolean;
+  house_trained?: boolean;
+  photo_urls?: string[];
+};
+
 type Props = {
   profile: { name: string; role: string };
   shelter: { id: string; name: string; city: string; state: string } | null;
-  pets: any[];
+  pets: Pet[];
 };
 
 export default function ShelterHome({ profile, shelter, pets }: Props) {
