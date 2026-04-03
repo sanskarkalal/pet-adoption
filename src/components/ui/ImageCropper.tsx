@@ -250,13 +250,19 @@ export default function ImageCropper({
 
         <div className="mt-5 flex gap-3">
           <Button
+            type="button"
             onClick={handleCrop}
             className="flex-1 bg-black text-white hover:bg-gray-800"
             disabled={!imageLoaded}
           >
             Use This Crop
           </Button>
-          <Button variant="outline" onClick={onCancel} className="flex-1">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onCancel}
+            className="flex-1"
+          >
             Cancel
           </Button>
         </div>

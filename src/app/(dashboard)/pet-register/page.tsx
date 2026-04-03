@@ -42,6 +42,7 @@ const trainingLabels: Record<TrainingLevel, string> = {
 export default function PetRegisterPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [mediaUploading, setMediaUploading] = useState(false);
 
   // Core fields
   const [name, setName] = useState("");
@@ -93,6 +94,10 @@ export default function PetRegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
+    if (mediaUploading) {
+      toast.error("Please wait for the photo or video upload to finish.");
+      return;
+    }
 
     setLoading(true);
     const supabase = createClient();
@@ -458,11 +463,16 @@ export default function PetRegisterPage() {
                 <MediaUpload
                   onPhotosChange={setPhotoUrls}
                   onVideosChange={setVideoUrls}
+                  onUploadStateChange={setMediaUploading}
                 />
               </div>
             </div>
 
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={loading || mediaUploading}
+            >
               {loading ? "Registering..." : "Register Pet →"}
             </Button>
           </form>
