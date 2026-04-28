@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -50,7 +48,63 @@ const preferencesSchema = z
   );
 
 type PreferencesForm = z.output<typeof preferencesSchema>;
-type PreferencesFormInput = z.input<typeof preferencesSchema>;
+type PreferencesFormState = {
+  preferred_species: string[];
+  preferred_breed: string;
+  preferred_age_min: string;
+  preferred_age_max: string;
+  has_children: boolean;
+  has_other_pets: boolean;
+  living_situation: PreferencesForm["living_situation"];
+  yard: boolean;
+  experience_level: PreferencesForm["experience_level"];
+  notes: string;
+};
+type PreferencesErrors = Partial<Record<keyof PreferencesFormState, string>>;
+type SavedPreferences = Partial<
+  Omit<PreferencesForm, "preferred_age_min" | "preferred_age_max">
+> & {
+  preferred_age_min?: number | null;
+  preferred_age_max?: number | null;
+  preferred_breed?: string | null;
+  notes?: string | null;
+};
+
+const emptyPreferencesForm: PreferencesFormState = {
+  preferred_species: [],
+  preferred_breed: "",
+  preferred_age_min: "",
+  preferred_age_max: "",
+  has_children: false,
+  has_other_pets: false,
+  living_situation: "house",
+  yard: false,
+  experience_level: "first_time",
+  notes: "",
+};
+
+function preferencesToForm(preferences?: SavedPreferences | null): PreferencesFormState {
+  if (!preferences) return emptyPreferencesForm;
+
+  return {
+    preferred_species: preferences.preferred_species ?? [],
+    preferred_breed: preferences.preferred_breed ?? "",
+    preferred_age_min:
+      preferences.preferred_age_min == null
+        ? ""
+        : String(preferences.preferred_age_min),
+    preferred_age_max:
+      preferences.preferred_age_max == null
+        ? ""
+        : String(preferences.preferred_age_max),
+    has_children: preferences.has_children ?? false,
+    has_other_pets: preferences.has_other_pets ?? false,
+    living_situation: preferences.living_situation ?? "house",
+    yard: preferences.yard ?? false,
+    experience_level: preferences.experience_level ?? "first_time",
+    notes: preferences.notes ?? "",
+  };
+}
 
 const speciesOptions = [
   "Dog",
@@ -107,36 +161,18 @@ export default function PreferencesPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [bootstrapping, setBootstrapping] = useState(true);
+  const [saveDebug, setSaveDebug] = useState<string | null>(null);
+  const [form, setForm] = useState<PreferencesFormState>(emptyPreferencesForm);
+  const [errors, setErrors] = useState<PreferencesErrors>({});
 
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    watch,
-    reset,
-    formState: { errors },
-  } = useForm<PreferencesFormInput, unknown, PreferencesForm>({
-    resolver: zodResolver(preferencesSchema),
-    defaultValues: {
-      preferred_species: [],
-      preferred_breed: "",
-      preferred_age_min: undefined,
-      preferred_age_max: undefined,
-      has_children: false,
-      has_other_pets: false,
-      living_situation: "house",
-      yard: false,
-      experience_level: "first_time",
-      notes: "",
-    },
-  });
-
-  const preferredSpecies = watch("preferred_species");
-  const hasChildren = watch("has_children");
-  const hasOtherPets = watch("has_other_pets");
-  const yard = watch("yard");
-  const livingChoice = watch("living_situation");
-  const experienceChoice = watch("experience_level");
+  const updateField = <K extends keyof PreferencesFormState>(
+    field: K,
+    value: PreferencesFormState[K],
+  ) => {
+    setForm((current) => ({ ...current, [field]: value }));
+    setErrors((current) => ({ ...current, [field]: undefined }));
+    setSaveDebug(null);
+  };
 
   useEffect(() => {
     const loadPreferences = async () => {
@@ -152,89 +188,106 @@ export default function PreferencesPage() {
         return;
       }
 
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("preferences")
         .select("*")
         .eq("user_id", user.id)
-        .maybeSingle();
+        .order("created_at", { ascending: false })
+        .limit(1);
 
-      if (data) {
-        reset({
-          preferred_species: data.preferred_species ?? [],
-          preferred_breed: data.preferred_breed ?? "",
-          preferred_age_min: data.preferred_age_min ?? undefined,
-          preferred_age_max: data.preferred_age_max ?? undefined,
-          has_children: data.has_children ?? false,
-          has_other_pets: data.has_other_pets ?? false,
-          living_situation: data.living_situation ?? "house",
-          yard: data.yard ?? false,
-          experience_level: data.experience_level ?? "first_time",
-          notes: data.notes ?? "",
-        });
+      if (error) {
+        toast.error(`Failed to load preferences: ${error.message}`);
+        setBootstrapping(false);
+        return;
+      }
+
+      const preferences = data?.[0];
+      if (preferences) {
+        setForm(preferencesToForm(preferences));
       }
 
       setBootstrapping(false);
     };
 
     void loadPreferences();
-  }, [reset, router]);
+  }, [router]);
 
   const toggleSpecies = (species: string) => {
-    const updated = preferredSpecies.includes(species)
-      ? preferredSpecies.filter((item) => item !== species)
-      : [...preferredSpecies, species];
+    const updated = form.preferred_species.includes(species)
+      ? form.preferred_species.filter((item) => item !== species)
+      : [...form.preferred_species, species];
 
-    setValue("preferred_species", updated, { shouldValidate: true });
+    updateField("preferred_species", updated);
   };
 
-  const onSubmit = async (data: PreferencesForm) => {
+  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     setLoading(true);
-    const supabase = createClient();
+    const parsed = preferencesSchema.safeParse(form);
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      toast.error("Not authenticated");
-      router.push("/login");
-      return;
-    }
-
-    const payload = {
-      preferred_species: data.preferred_species,
-      preferred_breed: data.preferred_breed?.trim() || null,
-      preferred_age_min:
-        data.preferred_age_min == null ? null : data.preferred_age_min,
-      preferred_age_max:
-        data.preferred_age_max == null ? null : data.preferred_age_max,
-      has_children: data.has_children,
-      has_other_pets: data.has_other_pets,
-      living_situation: data.living_situation,
-      yard: data.yard,
-      experience_level: data.experience_level,
-      notes: data.notes?.trim() || null,
-    };
-
-    const { data: existing } = await supabase
-      .from("preferences")
-      .select("id")
-      .eq("user_id", user.id)
-      .maybeSingle();
-
-    const { error } = existing
-      ? await supabase.from("preferences").update(payload).eq("user_id", user.id)
-      : await supabase.from("preferences").insert({ user_id: user.id, ...payload });
-
-    if (error) {
-      toast.error(error.message);
+    if (!parsed.success) {
+      const nextErrors: PreferencesErrors = {};
+      parsed.error.issues.forEach((issue) => {
+        const field = issue.path[0] as keyof PreferencesFormState | undefined;
+        if (field) nextErrors[field] = issue.message;
+      });
+      setErrors(nextErrors);
       setLoading(false);
       return;
     }
 
-    toast.success("Preferences saved");
-    router.push("/home");
-    router.refresh();
+    const currentData = parsed.data;
+
+    const payload = {
+      preferred_species: currentData.preferred_species,
+      preferred_breed: currentData.preferred_breed?.trim() || null,
+      preferred_age_min:
+        currentData.preferred_age_min == null
+          ? null
+          : currentData.preferred_age_min,
+      preferred_age_max:
+        currentData.preferred_age_max == null
+          ? null
+          : currentData.preferred_age_max,
+      has_children: currentData.has_children,
+      has_other_pets: currentData.has_other_pets,
+      living_situation: currentData.living_situation,
+      yard: currentData.yard,
+      experience_level: currentData.experience_level,
+      notes: currentData.notes?.trim() || null,
+    };
+
+    const response = await fetch("/api/preferences", {
+      method: "PUT",
+      cache: "no-store",
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const result = (await response.json()) as {
+      preferences?: SavedPreferences;
+      userId?: string;
+      error?: string;
+    };
+
+    if (!response.ok || !result.preferences) {
+      toast.error(result.error ?? "Unable to save preferences.");
+      setSaveDebug(result.error ?? "Save failed without an error message.");
+      setLoading(false);
+      return;
+    }
+
+    setForm(preferencesToForm(result.preferences));
+    toast.success(
+      `Saved preferences for ${result.preferences.preferred_species?.join(", ")}`,
+    );
+    setLoading(false);
+    setSaveDebug(
+      `Sent ${payload.preferred_species.join(", ")}; saved ${
+        result.preferences.preferred_species?.join(", ") || "none"
+      } for ${result.userId}`,
+    );
+    window.location.assign("/home");
   };
 
   if (bootstrapping) {
@@ -261,7 +314,7 @@ export default function PreferencesPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+            <form onSubmit={onSubmit} className="space-y-8">
               <section className="space-y-4">
                 <div>
                   <h2 className="font-semibold text-gray-900">What are you open to?</h2>
@@ -279,7 +332,7 @@ export default function PreferencesPage() {
                         type="button"
                         onClick={() => toggleSpecies(species)}
                         className={`rounded-full border-2 px-3 py-1.5 text-sm font-medium transition-all ${
-                          preferredSpecies.includes(species)
+                          form.preferred_species.includes(species)
                             ? "border-black bg-black text-white"
                             : "border-gray-200 bg-white hover:border-gray-400"
                         }`}
@@ -290,7 +343,7 @@ export default function PreferencesPage() {
                   </div>
                   {errors.preferred_species && (
                     <p className="text-sm text-red-500">
-                      {errors.preferred_species.message}
+                      {errors.preferred_species}
                     </p>
                   )}
                 </div>
@@ -304,7 +357,10 @@ export default function PreferencesPage() {
                     <Input
                       id="preferred_breed"
                       placeholder="Example: Labrador, tabby, mixed breed"
-                      {...register("preferred_breed")}
+                      value={form.preferred_breed}
+                      onChange={(event) =>
+                        updateField("preferred_breed", event.target.value)
+                      }
                     />
                   </div>
 
@@ -318,18 +374,29 @@ export default function PreferencesPage() {
                         type="number"
                         min={0}
                         placeholder="Min age"
-                        {...register("preferred_age_min")}
+                        value={form.preferred_age_min}
+                        onChange={(event) =>
+                          updateField("preferred_age_min", event.target.value)
+                        }
                       />
                       <Input
                         type="number"
                         min={0}
                         placeholder="Max age"
-                        {...register("preferred_age_max")}
+                        value={form.preferred_age_max}
+                        onChange={(event) =>
+                          updateField("preferred_age_max", event.target.value)
+                        }
                       />
                     </div>
+                    {errors.preferred_age_min && (
+                      <p className="text-sm text-red-500">
+                        {errors.preferred_age_min}
+                      </p>
+                    )}
                     {errors.preferred_age_max && (
                       <p className="text-sm text-red-500">
-                        {errors.preferred_age_max.message}
+                        {errors.preferred_age_max}
                       </p>
                     )}
                   </div>
@@ -351,10 +418,13 @@ export default function PreferencesPage() {
                       key={option.id}
                       type="button"
                       onClick={() =>
-                        setValue("living_situation", option.id as PreferencesForm["living_situation"])
+                        updateField(
+                          "living_situation",
+                          option.id as PreferencesForm["living_situation"],
+                        )
                       }
                       className={`rounded-xl border-2 p-4 text-left transition-all ${
-                        livingChoice === option.id
+                        form.living_situation === option.id
                           ? "border-black bg-black text-white"
                           : "border-gray-200 bg-white hover:border-gray-400"
                       }`}
@@ -362,7 +432,9 @@ export default function PreferencesPage() {
                       <p className="font-medium">{option.label}</p>
                       <p
                         className={`mt-1 text-sm ${
-                          livingChoice === option.id ? "text-gray-200" : "text-gray-500"
+                          form.living_situation === option.id
+                            ? "text-gray-200"
+                            : "text-gray-500"
                         }`}
                       >
                         {option.description}
@@ -377,13 +449,13 @@ export default function PreferencesPage() {
                       key={option.id}
                       type="button"
                       onClick={() =>
-                        setValue(
+                        updateField(
                           "experience_level",
                           option.id as PreferencesForm["experience_level"],
                         )
                       }
                       className={`rounded-xl border-2 p-4 text-left transition-all ${
-                        experienceChoice === option.id
+                        form.experience_level === option.id
                           ? "border-black bg-black text-white"
                           : "border-gray-200 bg-white hover:border-gray-400"
                       }`}
@@ -391,7 +463,7 @@ export default function PreferencesPage() {
                       <p className="font-medium">{option.label}</p>
                       <p
                         className={`mt-1 text-sm ${
-                          experienceChoice === option.id
+                          form.experience_level === option.id
                             ? "text-gray-200"
                             : "text-gray-500"
                         }`}
@@ -406,9 +478,9 @@ export default function PreferencesPage() {
                   <div className="flex items-center gap-2">
                     <Checkbox
                       id="has_children"
-                      checked={hasChildren}
+                      checked={form.has_children}
                       onCheckedChange={(value) =>
-                        setValue("has_children", !!value)
+                        updateField("has_children", !!value)
                       }
                     />
                     <Label htmlFor="has_children">Children live in the home</Label>
@@ -416,9 +488,9 @@ export default function PreferencesPage() {
                   <div className="flex items-center gap-2">
                     <Checkbox
                       id="has_other_pets"
-                      checked={hasOtherPets}
+                      checked={form.has_other_pets}
                       onCheckedChange={(value) =>
-                        setValue("has_other_pets", !!value)
+                        updateField("has_other_pets", !!value)
                       }
                     />
                     <Label htmlFor="has_other_pets">Other pets live in the home</Label>
@@ -426,8 +498,10 @@ export default function PreferencesPage() {
                   <div className="flex items-center gap-2">
                     <Checkbox
                       id="yard"
-                      checked={yard}
-                      onCheckedChange={(value) => setValue("yard", !!value)}
+                      checked={form.yard}
+                      onCheckedChange={(value) =>
+                        updateField("yard", !!value)
+                      }
                     />
                     <Label htmlFor="yard">Access to a yard or outdoor space</Label>
                   </div>
@@ -443,13 +517,17 @@ export default function PreferencesPage() {
                   id="notes"
                   rows={4}
                   placeholder="Examples: looking for a calm senior pet, open to bonded pairs, need good apartment behavior."
-                  {...register("notes")}
+                  value={form.notes}
+                  onChange={(event) => updateField("notes", event.target.value)}
                 />
               </section>
 
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? "Saving..." : "Save Preferences"}
               </Button>
+              {saveDebug && (
+                <p className="text-center text-xs text-gray-500">{saveDebug}</p>
+              )}
             </form>
           </CardContent>
         </Card>

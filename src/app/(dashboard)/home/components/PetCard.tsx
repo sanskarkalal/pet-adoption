@@ -17,6 +17,7 @@ type Pet = {
   good_with_animals?: boolean;
   house_trained?: boolean;
   photo_urls?: string[];
+  matchScore?: number;
   shelters?: { name: string; city: string; state: string };
 };
 
@@ -89,6 +90,11 @@ export default function PetCard({
                 }`}
               >
                 {statusLabels[pet.status] ?? pet.status}
+              </span>
+            )}
+            {!showStatus && pet.matchScore != null && pet.matchScore > 0 && (
+              <span className="ml-2 shrink-0 rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-medium text-emerald-700">
+                Match {pet.matchScore}
               </span>
             )}
           </div>

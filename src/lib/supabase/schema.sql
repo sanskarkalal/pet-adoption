@@ -111,11 +111,24 @@ CREATE POLICY "Shelters can delete own pets" ON public.pets FOR DELETE
 
 -- Shelters
 CREATE POLICY "Anyone can view shelter data" ON public.shelters FOR SELECT USING (true);
-CREATE POLICY "Shelters can insert own data" ON public.shelters FOR INSERT WITH CHECK (user_id = auth.uid());
-CREATE POLICY "Shelters can update own data" ON public.shelters FOR UPDATE USING (user_id = auth.uid());
+CREATE POLICY "Shelters can insert own data" ON public.shelters FOR INSERT
+  WITH CHECK (user_id = auth.uid());
+CREATE POLICY "Shelters can update own data" ON public.shelters FOR UPDATE
+  USING (user_id = auth.uid())
+  WITH CHECK (user_id = auth.uid());
+CREATE POLICY "Shelters can delete own data" ON public.shelters FOR DELETE
+  USING (user_id = auth.uid());
 
 -- Preferences
-CREATE POLICY "Users can manage own preferences" ON public.preferences FOR ALL USING (user_id = auth.uid());
+CREATE POLICY "Users can view own preferences" ON public.preferences FOR SELECT
+  USING (user_id = auth.uid());
+CREATE POLICY "Users can insert own preferences" ON public.preferences FOR INSERT
+  WITH CHECK (user_id = auth.uid());
+CREATE POLICY "Users can update own preferences" ON public.preferences FOR UPDATE
+  USING (user_id = auth.uid())
+  WITH CHECK (user_id = auth.uid());
+CREATE POLICY "Users can delete own preferences" ON public.preferences FOR DELETE
+  USING (user_id = auth.uid());
 
 -- Adoption Applications
 CREATE POLICY "Adopters can view own applications" ON public.adoption_applications FOR SELECT

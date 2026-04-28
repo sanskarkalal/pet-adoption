@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import PetCard from "./PetCard";
 import { toast } from "sonner";
+import { AvailabilityPopup } from "../../pets/[id]/components/BookmarkButton";
 
 type Pet = {
   id: string;
@@ -48,6 +49,12 @@ type Props = {
   isFiltered: boolean;
   applicationCount: number;
   bookmarkCount: number;
+  applicationUpdateCount: number;
+  availabilityNotifications: {
+    petId: string;
+    petName: string;
+    isNowAvailable: boolean;
+  }[];
 };
 
 export default function AdopterHome({
@@ -57,6 +64,8 @@ export default function AdopterHome({
   isFiltered,
   applicationCount,
   bookmarkCount,
+  applicationUpdateCount,
+  availabilityNotifications,
 }: Props) {
   const router = useRouter();
   const [search, setSearch] = useState("");
@@ -92,10 +101,15 @@ export default function AdopterHome({
           <span className="font-bold text-lg">Pet Adoption</span>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <Link href="/applications">
+          <Link href="/applications" className="relative inline-flex">
             <Button variant="outline" size="sm">
               My Applications ({applicationCount})
             </Button>
+            {applicationUpdateCount > 0 && (
+              <span className="absolute -right-2 -top-2 inline-flex min-h-5 min-w-5 items-center justify-center rounded-full bg-red-600 px-1.5 text-[11px] font-semibold leading-none text-white shadow">
+                {applicationUpdateCount}
+              </span>
+            )}
           </Link>
           <Link href="/bookmarks">
             <Button variant="outline" size="sm">
@@ -125,6 +139,7 @@ export default function AdopterHome({
           </div>
           <div className="flex gap-4 text-sm text-gray-600">
             <span>{applicationCount} applications</span>
+            <span>{applicationUpdateCount} updates</span>
             <span>{bookmarkCount} bookmarks</span>
           </div>
         </div>
@@ -210,6 +225,7 @@ export default function AdopterHome({
           </div>
         )}
       </div>
+      <AvailabilityPopup notifications={availabilityNotifications} />
     </div>
   );
 }
