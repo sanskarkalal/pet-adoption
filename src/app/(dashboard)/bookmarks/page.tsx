@@ -5,11 +5,11 @@ import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 
 const statusStyles: Record<string, string> = {
-  available: "border-green-200 bg-green-100 text-green-700",
-  pending: "border-yellow-200 bg-yellow-100 text-yellow-700",
-  adopted: "border-blue-200 bg-blue-100 text-blue-700",
-  fostered: "border-violet-200 bg-violet-100 text-violet-700",
-  medical_hold: "border-red-200 bg-red-100 text-red-700",
+  available: "border-primary/30 bg-primary/15 text-primary",
+  pending: "border-secondary/30 bg-secondary/15 text-secondary",
+  adopted: "border-border bg-accent text-accent-foreground",
+  fostered: "border-border bg-accent text-accent-foreground",
+  medical_hold: "border-destructive/30 bg-destructive/15 text-destructive",
 };
 
 function formatStatus(value: string) {
@@ -75,10 +75,10 @@ export default async function BookmarksPage() {
     }) ?? [];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4">
+    <div className="organic-page">
+      <nav className="organic-nav">
         <div className="flex items-center gap-3">
-          <span className="text-xl font-bold text-gray-900">Pet Adoption</span>
+          <span className="text-xl font-bold text-foreground">Pet Adoption</span>
           <Link href="/home">
             <Button variant="ghost" size="sm">
               Browse Pets
@@ -97,24 +97,24 @@ export default async function BookmarksPage() {
         </Link>
       </nav>
 
-      <div className="mx-auto max-w-6xl px-6 py-8">
-        <div className="mb-8 flex flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm md:flex-row md:items-end md:justify-between">
+      <div className="organic-shell">
+        <div className="mb-8 flex flex-col gap-4 organic-panel md:flex-row md:items-end md:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">My Bookmarks</h1>
-            <p className="mt-1 text-gray-500">
+            <h1 className="text-2xl font-bold text-foreground">My Bookmarks</h1>
+            <p className="mt-1 text-muted-foreground">
               Keep an eye on pets you are interested in and spot availability
               changes quickly.
             </p>
           </div>
-          <div className="flex gap-3 text-sm text-gray-600">
+          <div className="flex gap-3 text-sm text-muted-foreground">
             <span>{bookmarks?.length ?? 0} saved</span>
             <span>{unavailable.length} status changes</span>
           </div>
         </div>
 
         {unavailable.length > 0 && (
-          <section className="mb-8 rounded-2xl border border-amber-200 bg-amber-50 p-5">
-            <h2 className="font-semibold text-amber-900">Availability Alerts</h2>
+          <section className="mb-8 rounded-2xl border border-secondary/30 bg-secondary/10 p-5">
+            <h2 className="font-semibold text-secondary">Availability Alerts</h2>
             <div className="mt-3 space-y-3">
               {unavailable.map((bookmark) => (
                 (() => {
@@ -123,11 +123,11 @@ export default async function BookmarksPage() {
                   return (
                     <div
                       key={bookmark.id}
-                      className="flex flex-col gap-2 rounded-xl border border-amber-100 bg-white p-4 md:flex-row md:items-center md:justify-between"
+                      className="flex flex-col gap-2 rounded-[1.5rem] border border-secondary/20 bg-card p-4 md:flex-row md:items-center md:justify-between"
                     >
                       <div>
-                        <p className="font-medium text-gray-900">{pet?.name}</p>
-                        <p className="text-sm text-gray-600">
+                        <p className="font-medium text-foreground">{pet?.name}</p>
+                        <p className="text-sm text-muted-foreground">
                           This pet is now{" "}
                           {bookmarkAlertLabels[pet?.status ?? ""] ??
                             formatStatus(pet?.status ?? "unknown")}
@@ -156,9 +156,9 @@ export default async function BookmarksPage() {
               return (
                 <div
                   key={bookmark.id}
-                  className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm"
+                  className="overflow-hidden rounded-[2rem] border border-border/60 bg-card/95 shadow-soft"
                 >
-                  <div className="relative h-52 w-full bg-gray-100">
+                  <div className="relative h-52 w-full bg-muted">
                     {pet?.photo_urls?.[0] ? (
                       <Image
                         src={pet.photo_urls[0]}
@@ -179,11 +179,11 @@ export default async function BookmarksPage() {
                       <div>
                         <Link
                           href={`/pets/${pet?.id}`}
-                          className="text-lg font-semibold text-gray-900 hover:underline"
+                          className="text-lg font-semibold text-foreground hover:underline"
                         >
                           {pet?.name}
                         </Link>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-muted-foreground">
                           {pet?.species}
                           {pet?.breed ? ` · ${pet.breed}` : ""}
                           {pet?.age != null ? ` · ${pet.age} yrs` : ""}
@@ -192,7 +192,7 @@ export default async function BookmarksPage() {
                       <span
                         className={`rounded-full border px-2.5 py-1 text-xs font-medium ${
                           statusStyles[pet?.status ?? ""] ??
-                          "border-gray-200 bg-gray-100 text-gray-600"
+                          "border-border/60 bg-muted text-muted-foreground"
                         }`}
                       >
                         {formatStatus(pet?.status ?? "unknown")}
@@ -200,12 +200,12 @@ export default async function BookmarksPage() {
                     </div>
 
                     {shelter && (
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-muted-foreground">
                         {shelter.name} · {shelter.city}, {shelter.state}
                       </p>
                     )}
 
-                    <p className="text-xs text-gray-400">
+                    <p className="text-xs text-muted-foreground/75">
                       Bookmarked on{" "}
                       {new Date(bookmark.created_at).toLocaleDateString("en-US", {
                         month: "short",
@@ -230,11 +230,11 @@ export default async function BookmarksPage() {
             })}
           </div>
         ) : (
-          <div className="rounded-2xl border border-dashed border-gray-300 bg-white py-20 text-center">
-            <h2 className="text-lg font-semibold text-gray-800">
+          <div className="rounded-2xl border border-dashed border-border bg-card py-20 text-center">
+            <h2 className="text-lg font-semibold text-foreground">
               No bookmarks yet
             </h2>
-            <p className="mt-2 text-gray-500">
+            <p className="mt-2 text-muted-foreground">
               Save pets you want to revisit and track their availability here.
             </p>
             <Link href="/home" className="mt-5 inline-block">

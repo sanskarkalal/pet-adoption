@@ -171,9 +171,9 @@ export default function ShelterSetupPage() {
 
   if (initialLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="organic-auth">
         <Card className="w-full max-w-lg">
-          <CardContent className="py-12 text-center text-gray-500">
+          <CardContent className="py-12 text-center text-muted-foreground">
             Loading shelter profile...
           </CardContent>
         </Card>
@@ -182,7 +182,7 @@ export default function ShelterSetupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+    <div className="organic-auth">
       <Card className="w-full max-w-lg">
         <CardHeader className="text-center">
           <div className="text-4xl mb-2">🏛️</div>
@@ -206,7 +206,7 @@ export default function ShelterSetupPage() {
                 onChange={(event) => updateField("name", event.target.value)}
               />
               {errors.name && (
-                <p className="text-red-500 text-sm">{errors.name}</p>
+                <p className="text-destructive text-sm">{errors.name}</p>
               )}
             </div>
 
@@ -219,11 +219,11 @@ export default function ShelterSetupPage() {
                 onChange={(event) => updateField("address", event.target.value)}
               />
               {errors.address && (
-                <p className="text-red-500 text-sm">{errors.address}</p>
+                <p className="text-destructive text-sm">{errors.address}</p>
               )}
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="city">City</Label>
                 <Input
@@ -233,7 +233,7 @@ export default function ShelterSetupPage() {
                   onChange={(event) => updateField("city", event.target.value)}
                 />
                 {errors.city && (
-                  <p className="text-red-500 text-sm">{errors.city}</p>
+                  <p className="text-destructive text-sm">{errors.city}</p>
                 )}
               </div>
               <div className="space-y-2">
@@ -245,7 +245,7 @@ export default function ShelterSetupPage() {
                   onChange={(event) => updateField("state", event.target.value)}
                 />
                 {errors.state && (
-                  <p className="text-red-500 text-sm">{errors.state}</p>
+                  <p className="text-destructive text-sm">{errors.state}</p>
                 )}
               </div>
             </div>
@@ -259,7 +259,7 @@ export default function ShelterSetupPage() {
                 onChange={(event) => updateField("phone", event.target.value)}
               />
               {errors.phone && (
-                <p className="text-red-500 text-sm">{errors.phone}</p>
+                <p className="text-destructive text-sm">{errors.phone}</p>
               )}
             </div>
 
@@ -273,14 +273,14 @@ export default function ShelterSetupPage() {
                 onChange={(event) => updateField("email", event.target.value)}
               />
               {errors.email && (
-                <p className="text-red-500 text-sm">{errors.email}</p>
+                <p className="text-destructive text-sm">{errors.email}</p>
               )}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="website">
                 Website{" "}
-                <span className="text-gray-400 text-xs">(optional)</span>
+                <span className="text-muted-foreground/75 text-xs">(optional)</span>
               </Label>
               <Input
                 id="website"
@@ -289,7 +289,7 @@ export default function ShelterSetupPage() {
                 onChange={(event) => updateField("website", event.target.value)}
               />
               {errors.website && (
-                <p className="text-red-500 text-sm">{errors.website}</p>
+                <p className="text-destructive text-sm">{errors.website}</p>
               )}
             </div>
 
@@ -301,7 +301,7 @@ export default function ShelterSetupPage() {
                   : "Save Shelter"}
             </Button>
             {saveDebug && (
-              <p className="text-center text-xs text-gray-500">{saveDebug}</p>
+              <p className="text-center text-xs text-muted-foreground">{saveDebug}</p>
             )}
           </form>
         </CardContent>

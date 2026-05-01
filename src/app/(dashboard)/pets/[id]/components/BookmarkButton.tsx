@@ -68,8 +68,8 @@ export default function BookmarkButton({
       disabled={loading}
       className={`transition-all ${
         bookmarked
-          ? "border-yellow-400 bg-yellow-50 text-yellow-700 hover:bg-yellow-100"
-          : "border-gray-200 hover:border-gray-400"
+          ? "border-secondary bg-secondary/10 text-secondary hover:bg-secondary/15"
+          : "border-border/60 hover:border-secondary"
       }`}
       title={bookmarked ? "Remove bookmark" : "Bookmark this pet"}
     >
@@ -106,25 +106,25 @@ export function AvailabilityPopup({ notifications }: PopupProps) {
       {visible.map((n) => (
         <div
           key={n.petId}
-          className="bg-white border border-gray-200 rounded-xl shadow-lg p-4 flex flex-col gap-2"
+          className="bg-card border border-border/60 rounded-[1.5rem] shadow-float p-4 flex flex-col gap-2"
         >
           <div className="flex items-start justify-between">
-            <p className="text-sm font-semibold text-gray-900">{n.petName}</p>
+            <p className="text-sm font-semibold text-foreground">{n.petName}</p>
             <button
               onClick={() => setDismissed((prev) => [...prev, n.petId])}
-              className="text-gray-400 hover:text-gray-600 text-xs ml-3 shrink-0"
+              className="text-muted-foreground/75 hover:text-muted-foreground text-xs ml-3 shrink-0"
             >
               ✕
             </button>
           </div>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-muted-foreground">
             {n.isNowAvailable
               ? "Your new possible buddy is available for adoption! 😁"
               : "Seems like this buddy is no longer available for adoption 😢"}
           </p>
           <Link
             href={`/pets/${n.petId}`}
-            className="text-sm font-medium text-black hover:underline"
+            className="text-sm font-medium text-primary hover:underline"
             onClick={() => setDismissed((prev) => [...prev, n.petId])}
           >
             view their profile

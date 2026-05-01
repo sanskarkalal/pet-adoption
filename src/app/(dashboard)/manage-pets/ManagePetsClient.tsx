@@ -25,11 +25,11 @@ type Props = {
 };
 
 const statusColors: Record<string, string> = {
-  available: "bg-green-100 text-green-700 border-green-200",
-  pending: "bg-yellow-100 text-yellow-700 border-yellow-200",
-  adopted: "bg-blue-100 text-blue-700 border-blue-200",
-  fostered: "bg-purple-100 text-purple-700 border-purple-200",
-  medical_hold: "bg-red-100 text-red-700 border-red-200",
+  available: "bg-primary/15 text-primary border-primary/30",
+  pending: "bg-secondary/15 text-secondary border-secondary/30",
+  adopted: "bg-accent text-accent-foreground border-border",
+  fostered: "bg-accent text-accent-foreground border-border",
+  medical_hold: "bg-destructive/15 text-destructive border-destructive/30",
 };
 
 const statusLabels: Record<string, string> = {
@@ -70,9 +70,9 @@ export default function ManagePetsClient({
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="organic-page">
       {/* Navbar */}
-      <nav className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+      <nav className="organic-nav">
         <div className="flex items-center gap-2">
           <span className="text-2xl">🐾</span>
           <span className="font-bold text-lg">Pet Adoption</span>
@@ -89,22 +89,22 @@ export default function ManagePetsClient({
         </div>
       </nav>
 
-      <div className="max-w-5xl mx-auto px-6 py-8">
+      <div className="organic-shell max-w-5xl">
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">Manage Pets</h1>
-          <p className="text-gray-500 mt-1">
+          <h1 className="text-2xl font-bold text-foreground">Manage Pets</h1>
+          <p className="text-muted-foreground mt-1">
             {shelter.name} · {pets.length} pet{pets.length !== 1 ? "s" : ""}{" "}
             listed
           </p>
         </div>
 
         {pets.length === 0 ? (
-          <div className="text-center py-20 bg-white rounded-xl border border-dashed border-gray-300">
+          <div className="organic-empty">
             <div className="text-5xl mb-4">🐶</div>
-            <h3 className="text-lg font-medium text-gray-700">
+            <h3 className="text-lg font-medium text-accent-foreground">
               No pets listed yet
             </h3>
-            <p className="text-gray-400 mt-1 mb-6">
+            <p className="text-muted-foreground/75 mt-1 mb-6">
               Start by registering your first pet
             </p>
             <Link href="/pet-register">
@@ -116,7 +116,7 @@ export default function ManagePetsClient({
             {pets.map((pet) => (
               <div
                 key={pet.id}
-                className="bg-white rounded-xl border border-gray-200 px-5 py-4 flex items-center justify-between shadow-sm"
+                className="bg-card rounded-[1.5rem] border border-border/60 px-5 py-4 flex items-center justify-between shadow-soft"
               >
                 <div className="flex items-center gap-4">
                   <div className="text-3xl">
@@ -128,19 +128,19 @@ export default function ManagePetsClient({
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <h3 className="font-semibold text-gray-900">
+                      <h3 className="font-semibold text-foreground">
                         {pet.name}
                       </h3>
                       <span
                         className={`text-xs font-medium px-2 py-0.5 rounded-full border capitalize ${
                           statusColors[pet.status] ??
-                          "bg-gray-100 text-gray-600"
+                          "bg-muted text-muted-foreground"
                         }`}
                       >
                         {statusLabels[pet.status] ?? pet.status}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-muted-foreground">
                       {pet.species}
                       {pet.breed ? ` · ${pet.breed}` : ""}
                       {pet.age !== undefined && pet.age !== null
@@ -149,22 +149,22 @@ export default function ManagePetsClient({
                     </p>
                     <div className="flex gap-2 mt-1 flex-wrap">
                       {pet.energy_level && (
-                        <span className="text-xs text-gray-400">
+                        <span className="text-xs text-muted-foreground/75">
                           ⚡ Energy {pet.energy_level}/10
                         </span>
                       )}
                       {pet.good_with_children && (
-                        <span className="text-xs text-gray-400">
+                        <span className="text-xs text-muted-foreground/75">
                           👶 Good with kids
                         </span>
                       )}
                       {pet.good_with_animals && (
-                        <span className="text-xs text-gray-400">
+                        <span className="text-xs text-muted-foreground/75">
                           🐾 Good with animals
                         </span>
                       )}
                       {pet.house_trained && (
-                        <span className="text-xs text-gray-400">
+                        <span className="text-xs text-muted-foreground/75">
                           🏠 House trained
                         </span>
                       )}
@@ -186,7 +186,7 @@ export default function ManagePetsClient({
                   <Button
                     variant="outline"
                     size="sm"
-                    className="text-red-600 hover:bg-red-50 border-red-200"
+                    className="text-destructive hover:bg-destructive/10 border-destructive/30"
                     onClick={() => handleDelete(pet.id, pet.name)}
                     disabled={deletingId === pet.id}
                   >

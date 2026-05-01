@@ -110,7 +110,7 @@ export default function ApplyButton({
       <Button
         disabled
         variant="outline"
-        className="cursor-not-allowed text-gray-400"
+        className="cursor-not-allowed text-muted-foreground/75"
       >
         {label}
       </Button>
@@ -122,7 +122,7 @@ export default function ApplyButton({
       <Button
         disabled
         variant="outline"
-        className="border-green-200 bg-green-50 text-green-600"
+        className="border-primary/30 bg-primary/10 text-primary"
       >
         Application Submitted
       </Button>
@@ -173,15 +173,15 @@ export default function ApplyButton({
       {!showForm ? (
         <Button
           onClick={() => setShowForm(true)}
-          className="bg-black text-white hover:bg-gray-800"
+          className="bg-primary text-primary-foreground hover:bg-primary/90"
         >
           Apply for Adoption
         </Button>
       ) : (
-        <div className="mt-4 space-y-4 rounded-xl border border-gray-200 bg-gray-50 p-4">
+        <div className="mt-4 space-y-4 rounded-[1.5rem] border border-border/60 bg-background p-4">
           <div>
-            <h3 className="font-semibold text-gray-900">Adoption Application</h3>
-            <p className="text-sm text-gray-500">
+            <h3 className="font-semibold text-foreground">Adoption Application</h3>
+            <p className="text-sm text-muted-foreground">
               Share the information shelters usually need to review fit,
               readiness, and daily care plans.
             </p>
@@ -191,7 +191,7 @@ export default function ApplyButton({
             <div className="space-y-2 md:col-span-2">
               <Label htmlFor="intro">
                 Why are you interested in this pet?{" "}
-                <span className="text-red-500">*</span>
+                <span className="text-destructive">*</span>
               </Label>
               <Textarea
                 id="intro"
@@ -204,7 +204,7 @@ export default function ApplyButton({
 
             <div className="space-y-2">
               <Label>
-                Living situation <span className="text-red-500">*</span>
+                Living situation <span className="text-destructive">*</span>
               </Label>
               <Select
                 value={form.householdType}
@@ -225,7 +225,7 @@ export default function ApplyButton({
 
             <div className="space-y-2">
               <Label>
-                Housing status <span className="text-red-500">*</span>
+                Housing status <span className="text-destructive">*</span>
               </Label>
               <Select
                 value={form.housingStatus}
@@ -246,7 +246,7 @@ export default function ApplyButton({
 
             <div className="space-y-2">
               <Label htmlFor="householdSize">
-                Household members <span className="text-red-500">*</span>
+                Household members <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="householdSize"
@@ -268,7 +268,7 @@ export default function ApplyButton({
 
             <div className="space-y-2">
               <Label htmlFor="otherPetsInfo">
-                Other pets <span className="text-red-500">*</span>
+                Other pets <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="otherPetsInfo"
@@ -280,7 +280,7 @@ export default function ApplyButton({
 
             <div className="space-y-2">
               <Label>
-                Home activity level <span className="text-red-500">*</span>
+                Home activity level <span className="text-destructive">*</span>
               </Label>
               <Select
                 value={form.activityLevel}
@@ -302,7 +302,7 @@ export default function ApplyButton({
             <div className="space-y-2 md:col-span-2">
               <Label htmlFor="workSchedule">
                 Daily schedule and time at home{" "}
-                <span className="text-red-500">*</span>
+                <span className="text-destructive">*</span>
               </Label>
               <Textarea
                 id="workSchedule"
@@ -315,7 +315,7 @@ export default function ApplyButton({
 
             <div className="space-y-2 md:col-span-2">
               <Label htmlFor="experience">
-                Pet experience <span className="text-red-500">*</span>
+                Pet experience <span className="text-destructive">*</span>
               </Label>
               <Textarea
                 id="experience"
@@ -328,7 +328,7 @@ export default function ApplyButton({
 
             <div className="space-y-2 md:col-span-2">
               <Label htmlFor="carePlan">
-                Care plan and preparedness <span className="text-red-500">*</span>
+                Care plan and preparedness <span className="text-destructive">*</span>
               </Label>
               <Textarea
                 id="carePlan"
@@ -341,7 +341,7 @@ export default function ApplyButton({
 
             <div className="space-y-2">
               <Label>
-                Adoption timeline <span className="text-red-500">*</span>
+                Adoption timeline <span className="text-destructive">*</span>
               </Label>
               <Select
                 value={form.timeline}
@@ -365,7 +365,7 @@ export default function ApplyButton({
             <Button
               onClick={handleApply}
               disabled={loading}
-              className="bg-black text-white hover:bg-gray-800"
+              className="bg-primary text-primary-foreground hover:bg-primary/90"
             >
               {loading ? "Submitting..." : "Submit Application"}
             </Button>

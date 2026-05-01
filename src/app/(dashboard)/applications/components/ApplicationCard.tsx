@@ -42,9 +42,9 @@ type Props = {
 };
 
 const statusBadgeColors: Record<string, string> = {
-  pending: "border-yellow-200 bg-yellow-100 text-yellow-700",
-  accepted: "border-green-200 bg-green-100 text-green-700",
-  rejected: "border-red-200 bg-red-100 text-red-700",
+  pending: "border-secondary/30 bg-secondary/15 text-secondary",
+  accepted: "border-primary/30 bg-primary/15 text-primary",
+  rejected: "border-destructive/30 bg-destructive/15 text-destructive",
 };
 
 const formatDate = (iso: string) =>
@@ -77,7 +77,7 @@ export default function ApplicationCard({
 
   const { details, legacyMessage } = parseApplicationMessage(app.message);
   const badgeColor =
-    statusBadgeColors[app.status] ?? "border-gray-200 bg-gray-100 text-gray-600";
+    statusBadgeColors[app.status] ?? "border-border/60 bg-muted text-muted-foreground";
 
   const handleDecision = async (decision: "accepted" | "rejected") => {
     setLoading(decision === "accepted" ? "accept" : "reject");
@@ -117,11 +117,11 @@ export default function ApplicationCard({
   };
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+    <div className="organic-panel p-5">
       <div className="mb-3 flex items-start justify-between gap-3">
         <div>
           <div className="mb-1 flex items-center gap-2">
-            <p className="font-semibold text-gray-900">
+            <p className="font-semibold text-foreground">
               {app.profiles?.name ?? "Unknown Applicant"}
             </p>
             <span
@@ -130,16 +130,16 @@ export default function ApplicationCard({
               {app.status}
             </span>
             {hasApplicationUpdate(app.created_at, app.updated_at) && (
-              <span className="rounded-full bg-sky-50 px-2 py-0.5 text-xs font-medium text-sky-700">
+              <span className="rounded-full bg-accent/60 px-2 py-0.5 text-xs font-medium text-primary">
                 Updated
               </span>
             )}
           </div>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-muted-foreground">
             Applied for{" "}
             <Link
               href={`/pets/${app.pets?.id}`}
-              className="font-medium text-black hover:underline"
+              className="font-medium text-primary hover:underline"
             >
               {app.pets?.name ?? "Unknown Pet"}
             </Link>
@@ -147,7 +147,7 @@ export default function ApplicationCard({
               ? ` (${app.pets.species}${app.pets.breed ? ` · ${app.pets.breed}` : ""})`
               : ""}
           </p>
-          <p className="mt-0.5 text-xs text-gray-400">
+          <p className="mt-0.5 text-xs text-muted-foreground/75">
             Submitted {formatDate(app.created_at)}
           </p>
         </div>
@@ -155,19 +155,19 @@ export default function ApplicationCard({
 
       {details ? (
         <div className="space-y-4">
-          <div className="rounded-lg bg-gray-50 p-3">
-            <p className="text-sm font-medium text-gray-900">Applicant summary</p>
-            <p className="mt-1 text-sm leading-relaxed text-gray-700">
+          <div className="rounded-2xl bg-background p-3">
+            <p className="text-sm font-medium text-foreground">Applicant summary</p>
+            <p className="mt-1 text-sm leading-relaxed text-accent-foreground">
               {applicationSummary(details)}
             </p>
           </div>
 
           <div className="space-y-3">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground/75">
                 Why this pet
               </p>
-              <p className="mt-1 text-sm leading-relaxed text-gray-700">
+              <p className="mt-1 text-sm leading-relaxed text-accent-foreground">
                 {details.intro}
               </p>
             </div>
@@ -180,11 +180,11 @@ export default function ApplicationCard({
                 if (!value) return null;
 
                 return (
-                  <div key={key} className="rounded-lg border border-gray-200 p-3">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">
+                  <div key={key} className="rounded-2xl border border-border/60 p-3">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground/75">
                       {label}
                     </p>
-                    <p className="mt-1 text-sm text-gray-700">{value}</p>
+                    <p className="mt-1 text-sm text-accent-foreground">{value}</p>
                   </div>
                 );
               })}
@@ -192,8 +192,8 @@ export default function ApplicationCard({
           </div>
         </div>
       ) : legacyMessage ? (
-        <div className="mb-4 rounded-lg bg-gray-50 p-3">
-          <p className="text-sm leading-relaxed text-gray-700">
+        <div className="mb-4 rounded-2xl bg-background p-3">
+          <p className="text-sm leading-relaxed text-accent-foreground">
             &ldquo;{legacyMessage}&rdquo;
           </p>
         </div>
@@ -203,7 +203,7 @@ export default function ApplicationCard({
         <div className="mt-4 flex gap-2">
           <Button
             size="sm"
-            className="bg-green-600 text-white hover:bg-green-700"
+            className="bg-primary text-primary-foreground hover:bg-primary/90"
             onClick={() => handleDecision("accepted")}
             disabled={loading !== null}
           >
@@ -212,7 +212,7 @@ export default function ApplicationCard({
           <Button
             size="sm"
             variant="outline"
-            className="border-red-200 text-red-600 hover:bg-red-50"
+            className="border-destructive/30 text-destructive hover:bg-destructive/10"
             onClick={() => handleDecision("rejected")}
             disabled={loading !== null}
           >

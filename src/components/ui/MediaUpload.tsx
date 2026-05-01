@@ -53,11 +53,15 @@ export default function MediaUpload({
   const videoUrlsRef = useRef<string[]>(existingVideoUrls);
 
   useEffect(() => {
+    // Existing edit flows can refresh media props after mount; keep local previews aligned.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setPhotoUrls(existingPhotoUrls);
     photoUrlsRef.current = existingPhotoUrls;
   }, [existingPhotoUrls]);
 
   useEffect(() => {
+    // Existing edit flows can refresh media props after mount; keep local previews aligned.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setVideoUrls(existingVideoUrls);
     videoUrlsRef.current = existingVideoUrls;
   }, [existingVideoUrls]);
@@ -207,7 +211,7 @@ export default function MediaUpload({
         {/* Photos */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <p className="text-sm font-medium text-gray-700">Photos</p>
+            <p className="text-sm font-medium text-accent-foreground">Photos</p>
             <Button
               type="button"
               variant="outline"
@@ -234,14 +238,14 @@ export default function MediaUpload({
                     src={url}
                     alt={`Photo ${i + 1}`}
                     fill
-                    className="object-cover rounded-lg border border-gray-200"
+                    className="object-cover rounded-2xl border border-border/60"
                     sizes="(max-width: 768px) 33vw, 20vw"
                   />
                   <button
                     type="button"
                     onClick={() => handleRemovePhoto(url)}
                     disabled={removingUrl === url}
-                    className="absolute top-1 right-1 bg-black bg-opacity-70 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10 disabled:opacity-50"
+                    className="absolute top-1 right-1 bg-primary/80 text-primary-foreground rounded-full w-5 h-5 text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10 disabled:opacity-50"
                   >
                     {removingUrl === url ? "…" : "✕"}
                   </button>
@@ -250,10 +254,10 @@ export default function MediaUpload({
             </div>
           ) : (
             <div
-              className="border-2 border-dashed border-gray-200 rounded-lg p-6 text-center cursor-pointer hover:border-gray-400 transition-colors"
+              className="border-2 border-dashed border-border/60 rounded-2xl p-6 text-center cursor-pointer hover:border-secondary transition-colors"
               onClick={() => photoRef.current?.click()}
             >
-              <p className="text-gray-400 text-sm">
+              <p className="text-muted-foreground/75 text-sm">
                 Click to upload a photo — you can crop it before saving
               </p>
             </div>
@@ -263,7 +267,7 @@ export default function MediaUpload({
         {/* Videos */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <p className="text-sm font-medium text-gray-700">Videos</p>
+            <p className="text-sm font-medium text-accent-foreground">Videos</p>
             <Button
               type="button"
               variant="outline"
@@ -289,13 +293,13 @@ export default function MediaUpload({
                   <video
                     src={url}
                     controls
-                    className="w-full rounded-lg border border-gray-200 max-h-40"
+                    className="w-full rounded-2xl border border-border/60 max-h-40"
                   />
                   <button
                     type="button"
                     onClick={() => handleRemoveVideo(url)}
                     disabled={removingUrl === url}
-                    className="absolute top-2 right-2 bg-black bg-opacity-70 text-white rounded-full w-6 h-6 text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10 disabled:opacity-50"
+                    className="absolute top-2 right-2 bg-primary/80 text-primary-foreground rounded-full w-6 h-6 text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10 disabled:opacity-50"
                   >
                     {removingUrl === url ? "…" : "✕"}
                   </button>
@@ -304,10 +308,10 @@ export default function MediaUpload({
             </div>
           ) : (
             <div
-              className="border-2 border-dashed border-gray-200 rounded-lg p-6 text-center cursor-pointer hover:border-gray-400 transition-colors"
+              className="border-2 border-dashed border-border/60 rounded-2xl p-6 text-center cursor-pointer hover:border-secondary transition-colors"
               onClick={() => videoRef.current?.click()}
             >
-              <p className="text-gray-400 text-sm">
+              <p className="text-muted-foreground/75 text-sm">
                 Click to upload a video (MP4, MOV · max 50MB)
               </p>
             </div>

@@ -170,7 +170,7 @@ export default function EditPetClient({ pet }: { pet: Pet }) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
+    <div className="organic-page px-4 py-8">
       <div className="max-w-2xl mx-auto">
         <div className="mb-6">
           <Link href="/manage-pets">
@@ -192,37 +192,37 @@ export default function EditPetClient({ pet }: { pet: Pet }) {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Locked fields */}
-              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 space-y-3">
-                <p className="text-xs font-medium text-gray-400 uppercase tracking-wide">
+              <div className="bg-background border border-border/60 rounded-2xl p-4 space-y-3">
+                <p className="text-xs font-medium text-muted-foreground/75 uppercase tracking-wide">
                   Locked Fields
                 </p>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-4 sm:grid-cols-2">
                   <div>
-                    <Label className="text-gray-400">Name</Label>
+                    <Label className="text-muted-foreground/75">Name</Label>
                     <Input
                       value={pet.name}
                       disabled
-                      className="bg-gray-100 text-gray-500"
+                      className="bg-muted text-muted-foreground"
                     />
                   </div>
                   <div>
-                    <Label className="text-gray-400">Species</Label>
+                    <Label className="text-muted-foreground/75">Species</Label>
                     <Input
                       value={pet.species}
                       disabled
-                      className="bg-gray-100 text-gray-500"
+                      className="bg-muted text-muted-foreground"
                     />
                   </div>
                   <div>
-                    <Label className="text-gray-400">Breed</Label>
+                    <Label className="text-muted-foreground/75">Breed</Label>
                     <Input
                       value={pet.breed ?? "—"}
                       disabled
-                      className="bg-gray-100 text-gray-500"
+                      className="bg-muted text-muted-foreground"
                     />
                   </div>
                   <div>
-                    <Label className="text-gray-400">Age</Label>
+                    <Label className="text-muted-foreground/75">Age</Label>
                     <Input
                       value={
                         pet.age !== undefined && pet.age !== null
@@ -230,15 +230,15 @@ export default function EditPetClient({ pet }: { pet: Pet }) {
                           : "—"
                       }
                       disabled
-                      className="bg-gray-100 text-gray-500"
+                      className="bg-muted text-muted-foreground"
                     />
                   </div>
                   <div>
-                    <Label className="text-gray-400">Sex</Label>
+                    <Label className="text-muted-foreground/75">Sex</Label>
                     <Input
                       value={pet.sex}
                       disabled
-                      className="bg-gray-100 text-gray-500 capitalize"
+                      className="bg-muted text-muted-foreground capitalize"
                     />
                   </div>
                 </div>
@@ -255,8 +255,8 @@ export default function EditPetClient({ pet }: { pet: Pet }) {
                       onClick={() => setStatus(s)}
                       className={`px-3 py-1.5 rounded-full border-2 text-sm font-medium transition-all cursor-pointer ${
                         status === s
-                          ? "border-black bg-black text-white"
-                          : "border-gray-200 hover:border-gray-400 bg-white"
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-border/60 hover:border-secondary bg-card"
                       }`}
                     >
                       {statusLabels[s]}
@@ -322,7 +322,7 @@ export default function EditPetClient({ pet }: { pet: Pet }) {
               <div className="space-y-2">
                 <Label htmlFor="energy_level">
                   Energy Level (1–10){" "}
-                  <span className="text-gray-400 text-xs">(optional)</span>
+                  <span className="text-muted-foreground/75 text-xs">(optional)</span>
                 </Label>
                 <Input
                   id="energy_level"
@@ -334,7 +334,7 @@ export default function EditPetClient({ pet }: { pet: Pet }) {
                   onChange={(e) => setEnergyLevel(e.target.value)}
                 />
                 {energyError && (
-                  <p className="text-red-500 text-sm">{energyError}</p>
+                  <p className="text-destructive text-sm">{energyError}</p>
                 )}
               </div>
 
@@ -384,8 +384,8 @@ export default function EditPetClient({ pet }: { pet: Pet }) {
                       onClick={() => setTrainingLevel(t)}
                       className={`px-3 py-1.5 rounded-full border-2 text-sm font-medium transition-all cursor-pointer ${
                         trainingLevel === t
-                          ? "border-black bg-black text-white"
-                          : "border-gray-200 hover:border-gray-400 bg-white"
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-border/60 hover:border-secondary bg-card"
                       }`}
                     >
                       {trainingLabels[t]}
@@ -398,7 +398,7 @@ export default function EditPetClient({ pet }: { pet: Pet }) {
               <div className="space-y-2">
                 <Label htmlFor="unique_quirks">
                   Unique Quirks{" "}
-                  <span className="text-gray-400 text-xs">(optional)</span>
+                  <span className="text-muted-foreground/75 text-xs">(optional)</span>
                 </Label>
                 <Textarea
                   id="unique_quirks"
@@ -412,7 +412,7 @@ export default function EditPetClient({ pet }: { pet: Pet }) {
               <div className="space-y-2">
                 <Label htmlFor="special_needs">
                   Special Needs{" "}
-                  <span className="text-gray-400 text-xs">(optional)</span>
+                  <span className="text-muted-foreground/75 text-xs">(optional)</span>
                 </Label>
                 <Textarea
                   id="special_needs"

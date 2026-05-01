@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -111,7 +110,7 @@ export default function RegisterPage() {
 
   if (emailSent) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="organic-auth">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
             <div className="text-4xl mb-2">📧</div>
@@ -122,11 +121,11 @@ export default function RegisterPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="text-center">
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-muted-foreground">
               Already confirmed?{" "}
               <Link
                 href="/login"
-                className="text-black font-medium hover:underline"
+                className="text-primary font-medium hover:underline"
               >
                 Sign in
               </Link>
@@ -138,7 +137,7 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+    <div className="organic-auth">
       <Card className="w-full max-w-lg">
         <CardHeader className="text-center">
           <div className="text-4xl mb-2">🐾</div>
@@ -150,22 +149,22 @@ export default function RegisterPage() {
             {/* Role Selection */}
             <div className="space-y-2">
               <Label>I am a...</Label>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid gap-3 sm:grid-cols-3">
                 {roles.map((r) => (
                   <button
                     key={r.id}
                     type="button"
                     onClick={() => setRole(r.id)}
-                    className={`p-3 rounded-lg border-2 text-center transition-all cursor-pointer ${
+                    className={`p-3 rounded-2xl border-2 text-center transition-all cursor-pointer ${
                       role === r.id
-                        ? "border-black bg-black text-white"
-                        : "border-gray-200 hover:border-gray-400 bg-white"
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "border-border/60 hover:border-secondary bg-card"
                     }`}
                   >
                     <div className="text-2xl mb-1">{r.icon}</div>
                     <div className="text-xs font-medium">{r.title}</div>
                     <div
-                      className={`text-xs mt-1 ${role === r.id ? "text-gray-300" : "text-gray-500"}`}
+                      className={`text-xs mt-1 ${role === r.id ? "text-primary-foreground/75" : "text-muted-foreground"}`}
                     >
                       {r.description}
                     </div>
@@ -179,7 +178,7 @@ export default function RegisterPage() {
               <Label htmlFor="name">Full Name</Label>
               <Input id="name" placeholder="John Doe" {...register("name")} />
               {errors.name && (
-                <p className="text-red-500 text-sm">{errors.name.message}</p>
+                <p className="text-destructive text-sm">{errors.name.message}</p>
               )}
             </div>
 
@@ -193,7 +192,7 @@ export default function RegisterPage() {
                 {...register("email")}
               />
               {errors.email && (
-                <p className="text-red-500 text-sm">{errors.email.message}</p>
+                <p className="text-destructive text-sm">{errors.email.message}</p>
               )}
             </div>
 
@@ -207,7 +206,7 @@ export default function RegisterPage() {
                 {...register("password")}
               />
               {errors.password && (
-                <p className="text-red-500 text-sm">
+                <p className="text-destructive text-sm">
                   {errors.password.message}
                 </p>
               )}
@@ -223,7 +222,7 @@ export default function RegisterPage() {
                 {...register("confirmPassword")}
               />
               {errors.confirmPassword && (
-                <p className="text-red-500 text-sm">
+                <p className="text-destructive text-sm">
                   {errors.confirmPassword.message}
                 </p>
               )}
@@ -233,11 +232,11 @@ export default function RegisterPage() {
               {loading ? "Creating account..." : "Create Account"}
             </Button>
 
-            <p className="text-center text-sm text-gray-500">
+            <p className="text-center text-sm text-muted-foreground">
               Already have an account?{" "}
               <Link
                 href="/login"
-                className="text-black font-medium hover:underline"
+                className="text-primary font-medium hover:underline"
               >
                 Sign in
               </Link>

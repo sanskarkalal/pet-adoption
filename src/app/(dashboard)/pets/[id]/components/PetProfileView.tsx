@@ -55,14 +55,14 @@ type Props = {
 };
 
 const statusConfig: Record<string, { label: string; color: string }> = {
-  available: { label: "Available", color: "bg-green-100 text-green-700" },
+  available: { label: "Available", color: "bg-primary/15 text-primary" },
   pending: {
     label: "Pending Adoption",
-    color: "bg-yellow-100 text-yellow-700",
+    color: "bg-secondary/15 text-secondary",
   },
-  adopted: { label: "Adopted", color: "bg-blue-100 text-blue-700" },
-  fostered: { label: "Fostered", color: "bg-violet-100 text-violet-700" },
-  medical_hold: { label: "Medical Hold", color: "bg-red-100 text-red-700" },
+  adopted: { label: "Adopted", color: "bg-accent text-accent-foreground" },
+  fostered: { label: "Fostered", color: "bg-accent text-accent-foreground" },
+  medical_hold: { label: "Medical Hold", color: "bg-destructive/15 text-destructive" },
 };
 
 const trainingLabels: Record<string, string> = {
@@ -84,7 +84,7 @@ export default function PetProfileView({
   const router = useRouter();
   const status = statusConfig[pet.status] ?? {
     label: pet.status,
-    color: "bg-gray-100 text-gray-600",
+    color: "bg-muted text-muted-foreground",
   };
 
   const isAdopterOrFoster =
@@ -98,8 +98,8 @@ export default function PetProfileView({
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4">
+    <div className="organic-page">
+      <nav className="organic-nav">
         <div className="flex items-center gap-2">
           <span className="font-bold text-lg">Pet Adoption</span>
         </div>
@@ -129,7 +129,7 @@ export default function PetProfileView({
         </div>
       </nav>
 
-      <div className="mx-auto max-w-5xl space-y-6 px-6 py-8">
+      <div className="organic-shell max-w-5xl space-y-6">
         {pet.photo_urls && pet.photo_urls.length > 0 && (
           <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
             {pet.photo_urls.map((url, index) => (
@@ -138,7 +138,7 @@ export default function PetProfileView({
                   src={url}
                   alt={`${pet.name} photo ${index + 1}`}
                   fill
-                  className="rounded-xl border border-gray-200 object-cover"
+                  className="rounded-[1.5rem] border border-border/60 object-cover"
                   sizes="(max-width: 768px) 100vw, 33vw"
                 />
               </div>
@@ -146,18 +146,18 @@ export default function PetProfileView({
           </div>
         )}
 
-        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+        <div className="organic-panel">
           <div className="mb-4 flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <div>
               <div className="mb-1 flex flex-wrap items-center gap-3">
-                <h1 className="text-3xl font-bold text-gray-900">{pet.name}</h1>
+                <h1 className="text-3xl font-bold text-foreground">{pet.name}</h1>
                 <span
                   className={`rounded-full px-3 py-1 text-sm font-medium ${status.color}`}
                 >
                   {status.label}
                 </span>
               </div>
-              <p className="text-gray-500">
+              <p className="text-muted-foreground">
                 {pet.species}
                 {pet.breed ? ` · ${pet.breed}` : ""}
                 {pet.age != null ? ` · ${pet.age} yr${pet.age !== 1 ? "s" : ""}` : ""}
@@ -174,37 +174,37 @@ export default function PetProfileView({
             )}
           </div>
 
-          <div className="mb-5 grid gap-3 rounded-xl bg-gray-50 p-4 md:grid-cols-3">
+          <div className="mb-5 grid gap-3 rounded-[1.5rem] bg-background p-4 md:grid-cols-3">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground/75">
                 Applications
               </p>
-              <p className="mt-1 text-lg font-semibold text-gray-900">
+              <p className="mt-1 text-lg font-semibold text-foreground">
                 {applicationCount}
               </p>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-muted-foreground">
                 People have applied for this pet so far.
               </p>
             </div>
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground/75">
                 Shelter
               </p>
-              <p className="mt-1 text-lg font-semibold text-gray-900">
+              <p className="mt-1 text-lg font-semibold text-foreground">
                 {pet.shelters?.name ?? "Unknown shelter"}
               </p>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-muted-foreground">
                 {pet.shelters?.city}, {pet.shelters?.state}
               </p>
             </div>
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground/75">
                 Availability
               </p>
-              <p className="mt-1 text-lg font-semibold text-gray-900">
+              <p className="mt-1 text-lg font-semibold text-foreground">
                 {status.label}
               </p>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-muted-foreground">
                 Status updates also appear in your bookmarks and applications tabs.
               </p>
             </div>
@@ -212,37 +212,37 @@ export default function PetProfileView({
 
           <div className="mb-5 flex flex-wrap gap-2">
             {pet.is_vaccinated && (
-              <span className="rounded-full border border-green-200 bg-green-50 px-3 py-1 text-sm text-green-700">
+              <span className="rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-sm text-primary">
                 Vaccinated
               </span>
             )}
             {pet.is_neutered && (
-              <span className="rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-sm text-blue-700">
+              <span className="rounded-full border border-border bg-accent/60 px-3 py-1 text-sm text-accent-foreground">
                 Neutered or spayed
               </span>
             )}
             {pet.house_trained && (
-              <span className="rounded-full border border-orange-200 bg-orange-50 px-3 py-1 text-sm text-orange-700">
+              <span className="rounded-full border border-secondary/30 bg-secondary/10 px-3 py-1 text-sm text-secondary">
                 House trained
               </span>
             )}
             {pet.good_with_children && (
-              <span className="rounded-full border border-pink-200 bg-pink-50 px-3 py-1 text-sm text-pink-700">
+              <span className="rounded-full border border-secondary/30 bg-secondary/10 px-3 py-1 text-sm text-secondary">
                 Good with kids
               </span>
             )}
             {pet.good_with_animals && (
-              <span className="rounded-full border border-yellow-200 bg-yellow-50 px-3 py-1 text-sm text-yellow-700">
+              <span className="rounded-full border border-secondary/30 bg-secondary/10 px-3 py-1 text-sm text-secondary">
                 Good with animals
               </span>
             )}
             {pet.energy_level != null && (
-              <span className="rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-sm text-gray-700">
+              <span className="rounded-full border border-border/60 bg-background px-3 py-1 text-sm text-accent-foreground">
                 Energy {pet.energy_level}/10
               </span>
             )}
             {pet.training_level && pet.training_level !== "none" && (
-              <span className="rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-sm text-indigo-700">
+              <span className="rounded-full border border-border bg-accent/60 px-3 py-1 text-sm text-accent-foreground">
                 {trainingLabels[pet.training_level] ?? pet.training_level}
               </span>
             )}
@@ -267,65 +267,65 @@ export default function PetProfileView({
         </div>
 
         {pet.description && (
-          <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-            <h2 className="mb-2 font-semibold text-gray-900">About {pet.name}</h2>
-            <p className="leading-relaxed text-gray-600">{pet.description}</p>
+          <div className="organic-panel">
+            <h2 className="mb-2 font-semibold text-foreground">About {pet.name}</h2>
+            <p className="leading-relaxed text-muted-foreground">{pet.description}</p>
           </div>
         )}
 
         {pet.behavior && (
-          <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-            <h2 className="mb-2 font-semibold text-gray-900">
+          <div className="organic-panel">
+            <h2 className="mb-2 font-semibold text-foreground">
               Behavior and Personality
             </h2>
-            <p className="leading-relaxed text-gray-600">{pet.behavior}</p>
+            <p className="leading-relaxed text-muted-foreground">{pet.behavior}</p>
           </div>
         )}
 
         {pet.unique_quirks && (
-          <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-            <h2 className="mb-2 font-semibold text-gray-900">Unique Quirks</h2>
-            <p className="leading-relaxed text-gray-600">{pet.unique_quirks}</p>
+          <div className="organic-panel">
+            <h2 className="mb-2 font-semibold text-foreground">Unique Quirks</h2>
+            <p className="leading-relaxed text-muted-foreground">{pet.unique_quirks}</p>
           </div>
         )}
 
         {pet.special_needs && (
-          <div className="rounded-xl border border-amber-200 bg-amber-50 p-6">
-            <h2 className="mb-2 font-semibold text-amber-900">Special Needs</h2>
-            <p className="leading-relaxed text-amber-800">{pet.special_needs}</p>
+          <div className="rounded-[1.5rem] border border-secondary/30 bg-secondary/10 p-6">
+            <h2 className="mb-2 font-semibold text-secondary">Special Needs</h2>
+            <p className="leading-relaxed text-secondary">{pet.special_needs}</p>
           </div>
         )}
 
         {pet.medical_history && (
-          <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-            <h2 className="mb-2 font-semibold text-gray-900">Medical History</h2>
-            <p className="leading-relaxed text-gray-600">{pet.medical_history}</p>
+          <div className="organic-panel">
+            <h2 className="mb-2 font-semibold text-foreground">Medical History</h2>
+            <p className="leading-relaxed text-muted-foreground">{pet.medical_history}</p>
           </div>
         )}
 
         {pet.video_urls && pet.video_urls.length > 0 && (
-          <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-            <h2 className="mb-3 font-semibold text-gray-900">Videos</h2>
+          <div className="organic-panel">
+            <h2 className="mb-3 font-semibold text-foreground">Videos</h2>
             <div className="space-y-3">
               {pet.video_urls.map((url, index) => (
-                <video key={index} src={url} controls className="w-full rounded-lg" />
+                <video key={index} src={url} controls className="w-full rounded-2xl" />
               ))}
             </div>
           </div>
         )}
 
         {pet.shelters && (
-          <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-            <h2 className="mb-3 font-semibold text-gray-900">About the Shelter</h2>
-            <p className="font-medium text-gray-800">{pet.shelters.name}</p>
-            <p className="text-sm text-gray-500">
+          <div className="organic-panel">
+            <h2 className="mb-3 font-semibold text-foreground">About the Shelter</h2>
+            <p className="font-medium text-foreground">{pet.shelters.name}</p>
+            <p className="text-sm text-muted-foreground">
               {pet.shelters.city}, {pet.shelters.state}
             </p>
             {pet.shelters.phone && (
-              <p className="mt-1 text-sm text-gray-500">{pet.shelters.phone}</p>
+              <p className="mt-1 text-sm text-muted-foreground">{pet.shelters.phone}</p>
             )}
             {pet.shelters.email && (
-              <p className="text-sm text-gray-500">{pet.shelters.email}</p>
+              <p className="text-sm text-muted-foreground">{pet.shelters.email}</p>
             )}
           </div>
         )}

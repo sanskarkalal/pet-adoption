@@ -95,8 +95,8 @@ export default function AdopterHome({
   const species = [...new Set(pets.map((pet) => pet.species))];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="flex flex-wrap items-center justify-between gap-4 border-b border-gray-200 bg-white px-6 py-4">
+    <div className="organic-page">
+      <nav className="organic-nav">
         <div className="flex items-center gap-2">
           <span className="font-bold text-lg">Pet Adoption</span>
         </div>
@@ -106,7 +106,7 @@ export default function AdopterHome({
               My Applications ({applicationCount})
             </Button>
             {applicationUpdateCount > 0 && (
-              <span className="absolute -right-2 -top-2 inline-flex min-h-5 min-w-5 items-center justify-center rounded-full bg-red-600 px-1.5 text-[11px] font-semibold leading-none text-white shadow">
+              <span className="absolute -right-2 -top-2 inline-flex min-h-5 min-w-5 items-center justify-center rounded-full bg-destructive px-1.5 text-[11px] font-semibold leading-none text-primary-foreground shadow">
                 {applicationUpdateCount}
               </span>
             )}
@@ -121,23 +121,23 @@ export default function AdopterHome({
               Edit Preferences
             </Button>
           </Link>
-          <span className="px-2 text-sm text-gray-500">{profile.name}</span>
+          <span className="px-2 text-sm text-muted-foreground">{profile.name}</span>
           <Button variant="outline" size="sm" onClick={handleSignOut}>
             Sign Out
           </Button>
         </div>
       </nav>
 
-      <div className="mx-auto max-w-6xl px-6 py-8">
-        <div className="mb-6 flex flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm md:flex-row md:items-end md:justify-between">
+      <div className="organic-shell">
+        <div className="mb-6 flex flex-col gap-4 organic-panel md:flex-row md:items-end md:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Find Your Perfect Pet</h1>
-            <p className="mt-1 text-gray-500">
+            <h1 className="text-2xl font-bold text-foreground">Find Your Perfect Pet</h1>
+            <p className="mt-1 text-muted-foreground">
               {pets.length} available pet{pets.length === 1 ? "" : "s"} ranked
               with your saved preferences in mind.
             </p>
           </div>
-          <div className="flex gap-4 text-sm text-gray-600">
+          <div className="flex gap-4 text-sm text-muted-foreground">
             <span>{applicationCount} applications</span>
             <span>{applicationUpdateCount} updates</span>
             <span>{bookmarkCount} bookmarks</span>
@@ -145,8 +145,8 @@ export default function AdopterHome({
         </div>
 
         {isFiltered && (
-          <div className="mb-6 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3">
-            <p className="text-sm text-emerald-800">
+          <div className="mb-6 rounded-[1.5rem] border border-primary/30 bg-primary/10 px-4 py-3">
+            <p className="text-sm text-primary">
               Pets are ranked using your species, breed, age, and household-fit
               preferences instead of being hidden too aggressively.
               {preferences?.preferred_species?.length
@@ -160,15 +160,15 @@ export default function AdopterHome({
         )}
 
         {!preferences && (
-          <div className="mb-6 flex items-center justify-between rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
-            <p className="text-sm text-amber-800">
+          <div className="mb-6 flex items-center justify-between rounded-[1.5rem] border border-secondary/30 bg-secondary/10 px-4 py-3">
+            <p className="text-sm text-secondary">
               Set your preferences to get better ranking and more relevant matches.
             </p>
             <Link href="/preferences">
               <Button
                 size="sm"
                 variant="outline"
-                className="border-amber-300 text-amber-700 hover:bg-amber-100"
+                className="border-secondary/50 text-secondary hover:bg-secondary/15"
               >
                 Set Preferences
               </Button>
@@ -188,8 +188,8 @@ export default function AdopterHome({
               onClick={() => setSpeciesFilter("")}
               className={`rounded-full border-2 px-3 py-1.5 text-sm font-medium transition-all ${
                 speciesFilter === ""
-                  ? "border-black bg-black text-white"
-                  : "border-gray-200 bg-white hover:border-gray-400"
+                  ? "border-primary bg-primary text-primary-foreground"
+                  : "border-border/60 bg-card hover:border-secondary"
               }`}
             >
               All
@@ -200,8 +200,8 @@ export default function AdopterHome({
                 onClick={() => setSpeciesFilter(value)}
                 className={`rounded-full border-2 px-3 py-1.5 text-sm font-medium transition-all ${
                   speciesFilter === value
-                    ? "border-black bg-black text-white"
-                    : "border-gray-200 bg-white hover:border-gray-400"
+                    ? "border-primary bg-primary text-primary-foreground"
+                    : "border-border/60 bg-card hover:border-secondary"
                 }`}
               >
                 {value}
@@ -211,9 +211,9 @@ export default function AdopterHome({
         </div>
 
         {filtered.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-gray-300 bg-white py-20 text-center">
-            <h3 className="text-lg font-medium text-gray-700">No pets found</h3>
-            <p className="mt-1 text-gray-400">
+          <div className="organic-empty">
+            <h3 className="text-lg font-medium text-accent-foreground">No pets found</h3>
+            <p className="mt-1 text-muted-foreground/75">
               Try adjusting your search, species filter, or preferences.
             </p>
           </div>

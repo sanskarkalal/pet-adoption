@@ -292,9 +292,9 @@ export default function PreferencesPage() {
 
   if (bootstrapping) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
+      <div className="organic-auth">
         <Card className="w-full max-w-xl">
-          <CardContent className="py-12 text-center text-gray-500">
+          <CardContent className="py-12 text-center text-muted-foreground">
             Loading your preferences...
           </CardContent>
         </Card>
@@ -303,8 +303,8 @@ export default function PreferencesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 py-10">
-      <div className="mx-auto max-w-3xl">
+    <div className="organic-page p-4 py-10">
+      <div className="relative z-10 mx-auto max-w-3xl">
         <Card>
           <CardHeader>
             <CardTitle className="text-2xl">Pet Match Preferences</CardTitle>
@@ -317,8 +317,8 @@ export default function PreferencesPage() {
             <form onSubmit={onSubmit} className="space-y-8">
               <section className="space-y-4">
                 <div>
-                  <h2 className="font-semibold text-gray-900">What are you open to?</h2>
-                  <p className="text-sm text-gray-500">
+                  <h2 className="font-semibold text-foreground">What are you open to?</h2>
+                  <p className="text-sm text-muted-foreground">
                     Choose the pet types and age range you want to prioritize.
                   </p>
                 </div>
@@ -333,8 +333,8 @@ export default function PreferencesPage() {
                         onClick={() => toggleSpecies(species)}
                         className={`rounded-full border-2 px-3 py-1.5 text-sm font-medium transition-all ${
                           form.preferred_species.includes(species)
-                            ? "border-black bg-black text-white"
-                            : "border-gray-200 bg-white hover:border-gray-400"
+                            ? "border-primary bg-primary text-primary-foreground"
+                            : "border-border/60 bg-card hover:border-secondary"
                         }`}
                       >
                         {species}
@@ -342,7 +342,7 @@ export default function PreferencesPage() {
                     ))}
                   </div>
                   {errors.preferred_species && (
-                    <p className="text-sm text-red-500">
+                    <p className="text-sm text-destructive">
                       {errors.preferred_species}
                     </p>
                   )}
@@ -352,7 +352,7 @@ export default function PreferencesPage() {
                   <div className="space-y-2">
                     <Label htmlFor="preferred_breed">
                       Preferred breed
-                      <span className="ml-1 text-xs text-gray-400">(optional)</span>
+                      <span className="ml-1 text-xs text-muted-foreground/75">(optional)</span>
                     </Label>
                     <Input
                       id="preferred_breed"
@@ -367,9 +367,9 @@ export default function PreferencesPage() {
                   <div className="space-y-2">
                     <Label>
                       Preferred age range
-                      <span className="ml-1 text-xs text-gray-400">(optional)</span>
+                      <span className="ml-1 text-xs text-muted-foreground/75">(optional)</span>
                     </Label>
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid gap-3 sm:grid-cols-2">
                       <Input
                         type="number"
                         min={0}
@@ -390,12 +390,12 @@ export default function PreferencesPage() {
                       />
                     </div>
                     {errors.preferred_age_min && (
-                      <p className="text-sm text-red-500">
+                      <p className="text-sm text-destructive">
                         {errors.preferred_age_min}
                       </p>
                     )}
                     {errors.preferred_age_max && (
-                      <p className="text-sm text-red-500">
+                      <p className="text-sm text-destructive">
                         {errors.preferred_age_max}
                       </p>
                     )}
@@ -403,10 +403,10 @@ export default function PreferencesPage() {
                 </div>
               </section>
 
-              <section className="space-y-4 border-t border-gray-100 pt-8">
+              <section className="space-y-4 border-t border-border/40 pt-8">
                 <div>
-                  <h2 className="font-semibold text-gray-900">Household fit</h2>
-                  <p className="text-sm text-gray-500">
+                  <h2 className="font-semibold text-foreground">Household fit</h2>
+                  <p className="text-sm text-muted-foreground">
                     These details help the app surface pets that match your day to
                     day environment.
                   </p>
@@ -423,18 +423,18 @@ export default function PreferencesPage() {
                           option.id as PreferencesForm["living_situation"],
                         )
                       }
-                      className={`rounded-xl border-2 p-4 text-left transition-all ${
+                      className={`rounded-[1.5rem] border-2 p-4 text-left transition-all ${
                         form.living_situation === option.id
-                          ? "border-black bg-black text-white"
-                          : "border-gray-200 bg-white hover:border-gray-400"
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-border/60 bg-card hover:border-secondary"
                       }`}
                     >
                       <p className="font-medium">{option.label}</p>
                       <p
                         className={`mt-1 text-sm ${
                           form.living_situation === option.id
-                            ? "text-gray-200"
-                            : "text-gray-500"
+                            ? "text-primary-foreground/80"
+                            : "text-muted-foreground"
                         }`}
                       >
                         {option.description}
@@ -454,18 +454,18 @@ export default function PreferencesPage() {
                           option.id as PreferencesForm["experience_level"],
                         )
                       }
-                      className={`rounded-xl border-2 p-4 text-left transition-all ${
+                      className={`rounded-[1.5rem] border-2 p-4 text-left transition-all ${
                         form.experience_level === option.id
-                          ? "border-black bg-black text-white"
-                          : "border-gray-200 bg-white hover:border-gray-400"
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-border/60 bg-card hover:border-secondary"
                       }`}
                     >
                       <p className="font-medium">{option.label}</p>
                       <p
                         className={`mt-1 text-sm ${
                           form.experience_level === option.id
-                            ? "text-gray-200"
-                            : "text-gray-500"
+                            ? "text-primary-foreground/80"
+                            : "text-muted-foreground"
                         }`}
                       >
                         {option.description}
@@ -508,10 +508,10 @@ export default function PreferencesPage() {
                 </div>
               </section>
 
-              <section className="space-y-2 border-t border-gray-100 pt-8">
+              <section className="space-y-2 border-t border-border/40 pt-8">
                 <Label htmlFor="notes">
                   Notes for matching
-                  <span className="ml-1 text-xs text-gray-400">(optional)</span>
+                  <span className="ml-1 text-xs text-muted-foreground/75">(optional)</span>
                 </Label>
                 <Textarea
                   id="notes"
@@ -526,7 +526,7 @@ export default function PreferencesPage() {
                 {loading ? "Saving..." : "Save Preferences"}
               </Button>
               {saveDebug && (
-                <p className="text-center text-xs text-gray-500">{saveDebug}</p>
+                <p className="text-center text-xs text-muted-foreground">{saveDebug}</p>
               )}
             </form>
           </CardContent>

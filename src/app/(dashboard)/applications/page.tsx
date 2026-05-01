@@ -11,14 +11,14 @@ import {
 } from "@/lib/application-details";
 
 const statusPillStyles: Record<string, string> = {
-  pending: "border-yellow-200 bg-yellow-100 text-yellow-700",
-  accepted: "border-green-200 bg-green-100 text-green-700",
-  rejected: "border-red-200 bg-red-100 text-red-700",
-  available: "border-green-200 bg-green-100 text-green-700",
-  adopted: "border-blue-200 bg-blue-100 text-blue-700",
-  fostered: "border-violet-200 bg-violet-100 text-violet-700",
-  medical_hold: "border-red-200 bg-red-100 text-red-700",
-  pending_adoption: "border-yellow-200 bg-yellow-100 text-yellow-700",
+  pending: "border-secondary/30 bg-secondary/15 text-secondary",
+  accepted: "border-primary/30 bg-primary/15 text-primary",
+  rejected: "border-destructive/30 bg-destructive/15 text-destructive",
+  available: "border-primary/30 bg-primary/15 text-primary",
+  adopted: "border-border bg-accent text-accent-foreground",
+  fostered: "border-border bg-accent text-accent-foreground",
+  medical_hold: "border-destructive/30 bg-destructive/15 text-destructive",
+  pending_adoption: "border-secondary/30 bg-secondary/15 text-secondary",
 };
 
 const applicationStatusLabels: Record<string, string> = {
@@ -96,8 +96,8 @@ export default async function ApplicationsPage() {
     const reviewed = applications?.filter((a) => a.status !== "pending") ?? [];
 
     return (
-      <div className="min-h-screen bg-gray-50">
-        <nav className="flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4">
+      <div className="organic-page">
+        <nav className="organic-nav">
           <div className="flex items-center gap-2">
             <span className="text-2xl">Pet Adoption</span>
           </div>
@@ -108,24 +108,24 @@ export default async function ApplicationsPage() {
           </Link>
         </nav>
 
-        <div className="mx-auto max-w-4xl px-6 py-8">
+        <div className="organic-shell max-w-4xl">
           <div className="mb-8">
-            <h1 className="text-2xl font-bold text-gray-900">
+            <h1 className="text-2xl font-bold text-foreground">
               Adoption Applications
             </h1>
-            <p className="mt-1 text-gray-500">
+            <p className="mt-1 text-muted-foreground">
               {shelter.name} · {applications?.length ?? 0} total application
               {applications?.length !== 1 ? "s" : ""}
             </p>
           </div>
 
           <section className="mb-10">
-            <h2 className="mb-4 text-lg font-semibold text-gray-800">
+            <h2 className="mb-4 text-lg font-semibold text-foreground">
               Pending Review ({pending.length})
             </h2>
             {pending.length === 0 ? (
-              <div className="rounded-xl border border-dashed border-gray-300 bg-white py-12 text-center">
-                <p className="text-gray-400">No pending applications</p>
+              <div className="organic-empty py-12">
+                <p className="text-muted-foreground/75">No pending applications</p>
               </div>
             ) : (
               <div className="space-y-4">
@@ -138,7 +138,7 @@ export default async function ApplicationsPage() {
 
           {reviewed.length > 0 && (
             <section>
-              <h2 className="mb-4 text-lg font-semibold text-gray-800">
+              <h2 className="mb-4 text-lg font-semibold text-foreground">
                 Reviewed ({reviewed.length})
               </h2>
               <div className="space-y-4">
@@ -170,16 +170,15 @@ export default async function ApplicationsPage() {
     .order("updated_at", { ascending: false });
 
   const pending = applications?.filter((a) => a.status === "pending") ?? [];
-  const responded = applications?.filter((a) => a.status !== "pending") ?? [];
   const updates = applications?.filter((a) =>
     hasApplicationUpdate(a.created_at, a.updated_at),
   ) ?? [];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4">
+    <div className="organic-page">
+      <nav className="organic-nav">
         <div className="flex items-center gap-3">
-          <span className="text-xl font-bold text-gray-900">Pet Adoption</span>
+          <span className="text-xl font-bold text-foreground">Pet Adoption</span>
           <Link href="/home">
             <Button variant="ghost" size="sm">
               Browse Pets
@@ -198,16 +197,16 @@ export default async function ApplicationsPage() {
         </Link>
       </nav>
 
-      <div className="mx-auto max-w-6xl px-6 py-8">
-        <div className="mb-8 flex flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm md:flex-row md:items-end md:justify-between">
+      <div className="organic-shell">
+        <div className="mb-8 flex flex-col gap-4 organic-panel md:flex-row md:items-end md:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">My Applications</h1>
-            <p className="mt-1 text-gray-500">
+            <h1 className="text-2xl font-bold text-foreground">My Applications</h1>
+            <p className="mt-1 text-muted-foreground">
               Track every adoption application, shelter response, and pet status
               in one place.
             </p>
           </div>
-          <div className="flex gap-3 text-sm text-gray-600">
+          <div className="flex gap-3 text-sm text-muted-foreground">
             <span>{applications?.length ?? 0} total</span>
             <span>{pending.length} pending</span>
             <span>{updates.length} updates</span>
@@ -215,11 +214,11 @@ export default async function ApplicationsPage() {
         </div>
 
         {updates.length > 0 && (
-          <section className="mb-8 rounded-2xl border border-sky-200 bg-sky-50 p-5">
+          <section className="mb-8 rounded-2xl border border-border bg-accent/60 p-5">
             <div className="mb-3 flex items-center justify-between gap-3">
               <div>
-                <h2 className="font-semibold text-sky-900">Recent Updates</h2>
-                <p className="text-sm text-sky-800">
+                <h2 className="font-semibold text-primary">Recent Updates</h2>
+                <p className="text-sm text-primary">
                   These applications have a newer status or review update.
                 </p>
               </div>
@@ -232,13 +231,13 @@ export default async function ApplicationsPage() {
                   return (
                     <div
                       key={application.id}
-                      className="flex flex-col gap-2 rounded-xl border border-sky-100 bg-white p-4 md:flex-row md:items-center md:justify-between"
+                      className="flex flex-col gap-2 rounded-[1.5rem] border border-border/50 bg-card p-4 md:flex-row md:items-center md:justify-between"
                     >
                       <div>
-                        <p className="font-medium text-gray-900">
+                        <p className="font-medium text-foreground">
                           {pet?.name ?? "Pet"} was updated
                         </p>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-muted-foreground">
                           Shelter decision:{" "}
                           <span className="font-medium capitalize">
                             {applicationStatusLabels[application.status] ??
@@ -268,10 +267,10 @@ export default async function ApplicationsPage() {
           <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
             <section className="space-y-4">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-gray-900">
+                <h2 className="text-lg font-semibold text-foreground">
                   All Applications
                 </h2>
-                <span className="text-sm text-gray-500">
+                <span className="text-sm text-muted-foreground">
                   Ordered by latest activity
                 </span>
               </div>
@@ -286,10 +285,10 @@ export default async function ApplicationsPage() {
                 return (
                   <div
                     key={application.id}
-                    className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm"
+                    className="overflow-hidden rounded-[2rem] border border-border/60 bg-card/95 shadow-soft"
                   >
                     <div className="flex flex-col gap-4 p-5 md:flex-row">
-                      <div className="relative h-40 w-full overflow-hidden rounded-xl bg-gray-100 md:w-44">
+                      <div className="relative h-40 w-full overflow-hidden rounded-[1.5rem] bg-muted md:w-44">
                         {pet?.photo_urls?.[0] ? (
                           <Image
                             src={pet.photo_urls[0]}
@@ -310,11 +309,11 @@ export default async function ApplicationsPage() {
                           <div>
                             <Link
                               href={`/pets/${pet?.id}`}
-                              className="text-lg font-semibold text-gray-900 hover:underline"
+                              className="text-lg font-semibold text-foreground hover:underline"
                             >
                               {pet?.name ?? "Unknown Pet"}
                             </Link>
-                            <p className="text-sm text-gray-500">
+                            <p className="text-sm text-muted-foreground">
                               {pet?.species}
                               {pet?.breed ? ` · ${pet.breed}` : ""}
                               {shelter?.name ? ` · ${shelter.name}` : ""}
@@ -325,7 +324,7 @@ export default async function ApplicationsPage() {
                             <span
                               className={`rounded-full border px-2.5 py-1 text-xs font-medium capitalize ${
                                 statusPillStyles[application.status] ??
-                                "border-gray-200 bg-gray-100 text-gray-600"
+                                "border-border/60 bg-muted text-muted-foreground"
                               }`}
                             >
                               {applicationStatusLabels[application.status] ??
@@ -334,7 +333,7 @@ export default async function ApplicationsPage() {
                             <span
                               className={`rounded-full border px-2.5 py-1 text-xs font-medium ${
                                 statusPillStyles[pet?.status ?? ""] ??
-                                "border-gray-200 bg-gray-100 text-gray-600"
+                                "border-border/60 bg-muted text-muted-foreground"
                               }`}
                             >
                               {petStatusLabels[pet?.status ?? ""] ??
@@ -344,22 +343,22 @@ export default async function ApplicationsPage() {
                               application.created_at,
                               application.updated_at,
                             ) && (
-                              <span className="rounded-full bg-sky-50 px-2.5 py-1 text-xs font-medium text-sky-700">
+                              <span className="rounded-full bg-accent/60 px-2.5 py-1 text-xs font-medium text-primary">
                                 New update
                               </span>
                             )}
                           </div>
                         </div>
 
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-muted-foreground">
                           Applied on {formatDate(application.created_at)}
                         </p>
 
-                        <div className="rounded-xl bg-gray-50 p-4">
-                          <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">
+                        <div className="rounded-[1.5rem] bg-background p-4">
+                          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground/75">
                             Your application
                           </p>
-                          <p className="mt-2 text-sm leading-relaxed text-gray-700">
+                          <p className="mt-2 text-sm leading-relaxed text-accent-foreground">
                             {details
                               ? applicationSummary(details)
                               : legacyMessage ?? "Application submitted."}
@@ -373,30 +372,30 @@ export default async function ApplicationsPage() {
             </section>
 
             <aside className="space-y-4">
-              <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-                <h2 className="font-semibold text-gray-900">Status Guide</h2>
-                <div className="mt-3 space-y-3 text-sm text-gray-600">
+              <div className="organic-panel p-5">
+                <h2 className="font-semibold text-foreground">Status Guide</h2>
+                <div className="mt-3 space-y-3 text-sm text-muted-foreground">
                   <p>
-                    <span className="font-medium text-gray-900">Pending:</span>{" "}
+                    <span className="font-medium text-foreground">Pending:</span>{" "}
                     The shelter has your application and has not made a decision
                     yet.
                   </p>
                   <p>
-                    <span className="font-medium text-gray-900">Accepted:</span>{" "}
+                    <span className="font-medium text-foreground">Accepted:</span>{" "}
                     The shelter chose your application. The pet may still show as
                     pending adoption while final paperwork or handoff steps are in
                     progress.
                   </p>
                   <p>
-                    <span className="font-medium text-gray-900">Rejected:</span>{" "}
+                    <span className="font-medium text-foreground">Rejected:</span>{" "}
                     The shelter decided not to move forward on this application.
                   </p>
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-                <h2 className="font-semibold text-gray-900">Need to adjust fit?</h2>
-                <p className="mt-2 text-sm text-gray-600">
+              <div className="organic-panel p-5">
+                <h2 className="font-semibold text-foreground">Need to adjust fit?</h2>
+                <p className="mt-2 text-sm text-muted-foreground">
                   Keep your household preferences current so the browse page shows
                   pets that better match your home, experience, and lifestyle.
                 </p>
@@ -409,11 +408,11 @@ export default async function ApplicationsPage() {
             </aside>
           </div>
         ) : (
-          <div className="rounded-2xl border border-dashed border-gray-300 bg-white py-20 text-center">
-            <h2 className="text-lg font-semibold text-gray-800">
+          <div className="rounded-2xl border border-dashed border-border bg-card py-20 text-center">
+            <h2 className="text-lg font-semibold text-foreground">
               No applications yet
             </h2>
-            <p className="mt-2 text-gray-500">
+            <p className="mt-2 text-muted-foreground">
               Browse pets you love and submit an application when you find the
               right match.
             </p>

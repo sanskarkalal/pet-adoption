@@ -90,7 +90,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+    <div className="organic-auth">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="text-4xl mb-2">🐾</div>
@@ -108,7 +108,7 @@ export default function LoginPage() {
                 {...register("email")}
               />
               {errors.email && (
-                <p className="text-red-500 text-sm">{errors.email.message}</p>
+                <p className="text-destructive text-sm">{errors.email.message}</p>
               )}
             </div>
 
@@ -121,7 +121,7 @@ export default function LoginPage() {
                 {...register("password")}
               />
               {errors.password && (
-                <p className="text-red-500 text-sm">
+                <p className="text-destructive text-sm">
                   {errors.password.message}
                 </p>
               )}
@@ -131,11 +131,11 @@ export default function LoginPage() {
               {loading ? "Signing in..." : "Sign In"}
             </Button>
 
-            <p className="text-center text-sm text-gray-500">
+            <p className="text-center text-sm text-muted-foreground">
               Dont have an account?{" "}
               <Link
                 href="/register"
-                className="text-black font-medium hover:underline"
+                className="text-primary font-medium hover:underline"
               >
                 Create one
               </Link>

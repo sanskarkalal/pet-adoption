@@ -173,7 +173,7 @@ export default function PetRegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+    <div className="organic-auth">
       <Card className="w-full max-w-2xl">
         <CardHeader className="text-center">
           <div className="text-4xl mb-2">🐾</div>
@@ -187,7 +187,7 @@ export default function PetRegisterPage() {
             {/* Name */}
             <div className="space-y-2">
               <Label htmlFor="name">
-                Pet Name <span className="text-red-500">*</span>
+                Pet Name <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="name"
@@ -196,14 +196,14 @@ export default function PetRegisterPage() {
                 onChange={(e) => setName(e.target.value)}
               />
               {errors.name && (
-                <p className="text-red-500 text-sm">{errors.name}</p>
+                <p className="text-destructive text-sm">{errors.name}</p>
               )}
             </div>
 
             {/* Species */}
             <div className="space-y-2">
               <Label>
-                Species <span className="text-red-500">*</span>
+                Species <span className="text-destructive">*</span>
               </Label>
               <div className="flex flex-wrap gap-2">
                 {SPECIES_OPTIONS.map((s) => (
@@ -213,8 +213,8 @@ export default function PetRegisterPage() {
                     onClick={() => setSpecies(s)}
                     className={`px-3 py-1.5 rounded-full border-2 text-sm font-medium transition-all cursor-pointer ${
                       species === s
-                        ? "border-black bg-black text-white"
-                        : "border-gray-200 hover:border-gray-400 bg-white"
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "border-border/60 hover:border-secondary bg-card"
                     }`}
                   >
                     {s}
@@ -222,16 +222,16 @@ export default function PetRegisterPage() {
                 ))}
               </div>
               {errors.species && (
-                <p className="text-red-500 text-sm">{errors.species}</p>
+                <p className="text-destructive text-sm">{errors.species}</p>
               )}
             </div>
 
             {/* Breed + Age */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="breed">
                   Breed{" "}
-                  <span className="text-gray-400 text-xs">(optional)</span>
+                  <span className="text-muted-foreground/75 text-xs">(optional)</span>
                 </Label>
                 <Input
                   id="breed"
@@ -243,7 +243,7 @@ export default function PetRegisterPage() {
               <div className="space-y-2">
                 <Label htmlFor="age">
                   Age (years){" "}
-                  <span className="text-gray-400 text-xs">(optional)</span>
+                  <span className="text-muted-foreground/75 text-xs">(optional)</span>
                 </Label>
                 <Input
                   id="age"
@@ -253,7 +253,7 @@ export default function PetRegisterPage() {
                   onChange={(e) => setAge(e.target.value)}
                 />
                 {errors.age && (
-                  <p className="text-red-500 text-sm">{errors.age}</p>
+                  <p className="text-destructive text-sm">{errors.age}</p>
                 )}
               </div>
             </div>
@@ -261,7 +261,7 @@ export default function PetRegisterPage() {
             {/* Sex */}
             <div className="space-y-2">
               <Label>
-                Sex <span className="text-red-500">*</span>
+                Sex <span className="text-destructive">*</span>
               </Label>
               <div className="flex gap-3">
                 {SEX_OPTIONS.map((s) => (
@@ -271,8 +271,8 @@ export default function PetRegisterPage() {
                     onClick={() => setSex(s)}
                     className={`px-3 py-1.5 rounded-full border-2 text-sm font-medium transition-all cursor-pointer ${
                       sex === s
-                        ? "border-black bg-black text-white"
-                        : "border-gray-200 hover:border-gray-400 bg-white"
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "border-border/60 hover:border-secondary bg-card"
                     }`}
                   >
                     {s === "male"
@@ -289,7 +289,7 @@ export default function PetRegisterPage() {
             <div className="space-y-2">
               <Label htmlFor="description">
                 Description{" "}
-                <span className="text-gray-400 text-xs">(optional)</span>
+                <span className="text-muted-foreground/75 text-xs">(optional)</span>
               </Label>
               <Textarea
                 id="description"
@@ -303,7 +303,7 @@ export default function PetRegisterPage() {
             <div className="space-y-2">
               <Label htmlFor="behavior">
                 Behavior & Personality{" "}
-                <span className="text-gray-400 text-xs">(optional)</span>
+                <span className="text-muted-foreground/75 text-xs">(optional)</span>
               </Label>
               <Textarea
                 id="behavior"
@@ -317,7 +317,7 @@ export default function PetRegisterPage() {
             <div className="space-y-2">
               <Label htmlFor="medical_history">
                 Medical History{" "}
-                <span className="text-gray-400 text-xs">(optional)</span>
+                <span className="text-muted-foreground/75 text-xs">(optional)</span>
               </Label>
               <Textarea
                 id="medical_history"
@@ -348,8 +348,8 @@ export default function PetRegisterPage() {
             </div>
 
             {/* R2 Fields */}
-            <div className="border-t border-gray-100 pt-6">
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-6">
+            <div className="border-t border-border/40 pt-6">
+              <p className="text-xs font-semibold text-muted-foreground/75 uppercase tracking-wide mb-6">
                 Additional Details
               </p>
 
@@ -357,7 +357,7 @@ export default function PetRegisterPage() {
               <div className="space-y-2 mb-6">
                 <Label htmlFor="energy_level">
                   Energy Level (1–10){" "}
-                  <span className="text-gray-400 text-xs">(optional)</span>
+                  <span className="text-muted-foreground/75 text-xs">(optional)</span>
                 </Label>
                 <Input
                   id="energy_level"
@@ -369,7 +369,7 @@ export default function PetRegisterPage() {
                   onChange={(e) => setEnergyLevel(e.target.value)}
                 />
                 {errors.energyLevel && (
-                  <p className="text-red-500 text-sm">{errors.energyLevel}</p>
+                  <p className="text-destructive text-sm">{errors.energyLevel}</p>
                 )}
               </div>
 
@@ -419,8 +419,8 @@ export default function PetRegisterPage() {
                       onClick={() => setTrainingLevel(t)}
                       className={`px-3 py-1.5 rounded-full border-2 text-sm font-medium transition-all cursor-pointer ${
                         trainingLevel === t
-                          ? "border-black bg-black text-white"
-                          : "border-gray-200 hover:border-gray-400 bg-white"
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-border/60 hover:border-secondary bg-card"
                       }`}
                     >
                       {trainingLabels[t]}
@@ -433,7 +433,7 @@ export default function PetRegisterPage() {
               <div className="space-y-2 mb-6">
                 <Label htmlFor="unique_quirks">
                   Unique Quirks{" "}
-                  <span className="text-gray-400 text-xs">(optional)</span>
+                  <span className="text-muted-foreground/75 text-xs">(optional)</span>
                 </Label>
                 <Textarea
                   id="unique_quirks"
@@ -447,7 +447,7 @@ export default function PetRegisterPage() {
               <div className="space-y-2 mb-6">
                 <Label htmlFor="special_needs">
                   Special Needs{" "}
-                  <span className="text-gray-400 text-xs">(optional)</span>
+                  <span className="text-muted-foreground/75 text-xs">(optional)</span>
                 </Label>
                 <Textarea
                   id="special_needs"

@@ -160,16 +160,16 @@ export default function ImageCropper({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
-      <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl">
-        <h3 className="mb-1 font-semibold text-gray-900">Crop Photo</h3>
-        <p className="mb-4 text-sm text-gray-500">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-primary/70 p-4">
+      <div className="w-full max-w-lg rounded-2xl bg-card p-6 shadow-float">
+        <h3 className="mb-1 font-semibold text-foreground">Crop Photo</h3>
+        <p className="mb-4 text-sm text-muted-foreground">
           Drag to reposition · Drag corner to resize
         </p>
 
         <div
           ref={containerRef}
-          className="relative mx-auto overflow-hidden rounded-xl bg-gray-900 select-none"
+          className="relative mx-auto overflow-hidden rounded-[1.5rem] bg-foreground select-none"
           style={{ width: CONTAINER_SIZE, height: CONTAINER_SIZE }}
           onMouseDown={handlePointerDown}
           onMouseMove={handlePointerMove}
@@ -189,7 +189,7 @@ export default function ImageCropper({
 
           {imageLoaded && (
             <>
-              <div className="absolute inset-0 bg-black/55 pointer-events-none" />
+              <div className="absolute inset-0 bg-primary/55 pointer-events-none" />
 
               <div
                 className="absolute overflow-hidden border-2 border-white"
@@ -252,7 +252,7 @@ export default function ImageCropper({
           <Button
             type="button"
             onClick={handleCrop}
-            className="flex-1 bg-black text-white hover:bg-gray-800"
+            className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
             disabled={!imageLoaded}
           >
             Use This Crop
